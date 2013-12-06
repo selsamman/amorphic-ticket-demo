@@ -1,4 +1,4 @@
-Semotus is a framework for creating an object-oriented web-based applications in nodeJS and mongoDB.
+Semotus is a framework for creating object-oriented web-based applications in nodeJS and mongoDB.
 
 The key features include:
 
