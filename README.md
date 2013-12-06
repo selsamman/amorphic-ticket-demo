@@ -12,7 +12,7 @@ The key features include:
 
 
 Here is a quick example to illustrate the style of code:
-
+````
 Foo = RemoteObjectTemplate.create("Foo",
 {
 	field1:  {type: String},
@@ -44,7 +44,7 @@ Controller = RemoteObjectTemplate.create("Controller", {
 		this.bar.serverLogFoos();  // Will log "one" "Two" on nodejs console
 	}
 });
-
+````
 This project is alpha.  While it has been used to build a large and complex nodeJS application it has not undergone the rigor of being used on a breadth of projects and as such may not cater to all use cases.  It is also subject to change and currently does not have formal documentation.
 The repository structure is currently in the form of a sample application and this may also change
 

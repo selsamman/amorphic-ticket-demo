@@ -1,3 +1,2 @@
 ISSUES
 
-1) Cannot do b:iterate="blabla" with="" when blabla is in the controller because the context setting for with assumes the value is in the model.
