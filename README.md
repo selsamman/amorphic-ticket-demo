@@ -1,4 +1,4 @@
-Semotus is an object oriented framework for creating nodeJS applications that share code between he browser and the server.
+Semotus is a framework for creating an object-oriented web-based applications in nodeJS and mongoDB.
 
 The key features include:
 
@@ -46,5 +46,5 @@ Controller = RemoteObjectTemplate.create("Controller", {
 });
 ````
 This project is alpha.  While it has been used to build a large and complex nodeJS application it has not undergone the rigor of being used on a breadth of projects and as such may not cater to all use cases.  It is also subject to change and currently does not have formal documentation.
-The repository structure is currently in the form of a sample application and this may also change
+The repository structure is currently in the form of a sample application and this may also change.
 
