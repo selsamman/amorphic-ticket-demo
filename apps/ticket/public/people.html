@@ -1,0 +1,20 @@
+<div class="page-header">
+    <h1>People</h1>
+</div>
+
+<div class="container">
+    <table class="table" b:showif="getPeople().length > 0">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr b:iterateon="getPeople()" b:iteratewith="row">
+            <td b:bind="row.getFullName()"></td>
+            <td b:bind="row.email"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,27 @@
+<div class="page-header">
+    <div class="pull-right">
+        <a href="#" b:onclick="fetchTickets()">refresh</a>&nbsp;&nbsp;&nbsp;
+        <button b:onclick="newTicket()" type="button" class="btn btn-primary btn-lg">New Ticket</button>
+    </div>
+    <h1>Tickets</h1>
+</div>
+
+<div class="container">
+    <table class="table" b:showif="getTickets().length > 0">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Created</th>
+            <th>By</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr b:iterateon="getTickets()" b:iteratewith="row">
+            <td><a href="#" b:onclick="ticket=row;setPage('ticket')" b:bind="row.title || 'unnamed'"></a></td>
+            <td b:bind="row.created"></td>
+            <td b:bind="row.creator.getFullName()"></td>
+            <td><a href="#" b:onclick="ticket=row;deleteTicket()">Delete</a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>

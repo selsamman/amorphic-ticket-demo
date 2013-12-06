@@ -1,0 +1,28 @@
+<div class="page-header">
+    <div class="pull-right">
+        <a href="#" b:onclick="fetchProjects()">refresh</a>&nbsp;&nbsp;&nbsp;
+        <button b:onclick="newProject()" type="button" class="btn btn-primary btn-lg">New Project</button>
+    </div>
+    <h1>Projects</h1>
+</div>
+
+<div class="container">
+    <table class="table" b:showif="getProjects().length > 0">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Created</th>
+                <th>By</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr b:iterateon="getProjects()" b:iteratewith="row">
+                <td><a href="#" b:onclick="project=row;setPage('project')" b:bind="row.name || 'unnamed'"></a></td>
+                <td b:bind="row.created"></td>
+                <td b:bind="row.creator.getFullName()"></td>
+                <td><a href="#" b:onclick="project=row;deleteProject()">Delete</a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

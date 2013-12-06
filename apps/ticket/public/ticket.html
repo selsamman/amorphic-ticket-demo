@@ -1,0 +1,32 @@
+<div class="page-header">
+    <div class="pull-right">
+        <button b:onclick="saveTicket()" type="button" class="btn btn-primary btn-lg">Save</button>
+    </div>
+    <h1>Ticket</h1>
+ </div>
+
+
+<form class="form-horizontal" role="form">
+
+    <div class="form-group">
+        <b:textfield b:bind="ticket.title" id="title" lcols="2" fcols="10" text="Title" label="Title"></b:textfield>
+    </div>
+
+    <div class="form-group">
+        <b:memofield b:bind="ticket.description" id="title" lcols="2" fcols="10" text="Description" label="Description"></b:memofield>
+    </div>
+
+    <div class="form-group">
+        <b:staticfield b:bind="ticket.created" id="created" lcols="2" fcols="4" label="Created"></b:staticfield>
+        <b:staticfield b:bind="ticket.creator.firstName + ' ' + ticket.creator.lastName" id="lastName" lcols="2" fcols="4" label="Last Name"></b:staticfield>
+    </div>
+
+    <div class="form-group">
+        <b:objectselectfield b:bind="ticket.project" id="project" lcols="2" fcols="4" label="Project" values="getProjects()" text="name" empty="none" onchange="if(!ticket.project){ticket.release=null}"></b:objectselectfield>
+        <b:if test="ticket.project">
+            <b:objectselectfield b:bind="ticket.release" id="release" lcols="2" fcols="4" label="Release" values="ticket.project.releases" text="name" empty="none"></b:objectselectfield>
+        </b:if>
+    </div>
+
+</form>
+
