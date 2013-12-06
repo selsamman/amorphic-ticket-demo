@@ -443,7 +443,7 @@ module.exports.controller = function (objectTemplate, getTemplate)
 									{
 										return this.sendEmail("ChangePassword",
 											this.email, model.primaryCustomer.firstName, [
-												{name: "RESET", content: "https://www.coverpath.com?resetpassword&email=" +
+												{name: "RESET", content: "https://www.your server.com?resetpassword&email=" +
 													this.email + "&token=" + token},
 												{name: "FNAME", content: model.primaryCustomer.firstName}
 											]);
@@ -730,12 +730,11 @@ module.exports.controller = function (objectTemplate, getTemplate)
 					],
 					message: {
 						to: [{
-							email: (dbname == "prod" || dbname == "uat") ? email : "sam@coverpath.com",
+							email: (dbname == "prod" || dbname == "uat") ? email : "name@domain.com",
 							name: name
 						}],
-						from_email: "help@coverpath.com",
-						from_name: "Coverpath",
-						bcc_address: "help@coverpath.com",
+						from_email: "help@domainh.com",
+						from_name: "Name",
 						global_merge_vars: vars
 					}
 				}).then(function (results)
