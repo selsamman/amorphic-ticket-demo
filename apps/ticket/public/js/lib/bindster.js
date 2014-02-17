@@ -1334,7 +1334,15 @@ Bindster.prototype.getTags = function (node, mapAttrs, finger_print)
 			case "test":
 				tags['test'] = value;
 				break;
-			
+
+			case "values":
+				tags['fill'] = value;
+				break;
+
+			case "descriptions":
+				tags['using'] = value;
+				break;
+
 			case "messagevalue":
 				if (attrs["messagename"])
 					this.messages[attrs["messagename"]] = value;

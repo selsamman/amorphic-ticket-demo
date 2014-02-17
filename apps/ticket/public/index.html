@@ -27,6 +27,7 @@
 <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
 <![endif]-->
 
+
 <title> Semotus Ticket Demo </title>
 </head>
 
@@ -36,7 +37,7 @@
         <li b:class="page=='home' ? 'active' : ''}"><a href="#home">Home</a></li>
         <li b:class="page=='login' ? 'active' : ''}" b:showif="!loggedIn"><a href="#login">Login</a></li>
         <li b:class="page=='register'' ? 'active' : ''}"><a href="#register">Register</a></li>
-        <li b:showif="loggedIn"><a href="#" b:onclick="clientLogout()">Logout</a></li>
+        <li b:showif="loggedIn"><a href="#" b:onclick="logout()">Logout</a></li>
     </ul>
     <ul class="nav navbar-nav" b:showif="loggedIn">
         <li b:class="page=='tickets' ? 'active' : ''}"><a href="#" b:onclick="setPage('tickets')">Tickets</a></li>
@@ -72,6 +73,7 @@
     </b:if>
 
     <a name="login" b:onarrival="setPage('login')"></a>
+
     <b:if test="page == 'login'">
 
         <div class="page-header">
@@ -81,14 +83,14 @@
         <form class="form-horizontal" role="form">
             <div class="form-group">
                 <b:textfield b:bind="email" id="email" lcols="2" fcols="4" text="Email Address" label="User ID" focus="1"></b:textfield>
-                <b:passwordfield b:bind="password" id="password" lcols="2" fcols="4" label="Password" onenter="clientLogin()"></b:passwordfield>
+                <b:passwordfield b:bind="password" id="password" lcols="2" fcols="4" label="Password" onenter="login()"></b:passwordfield>
             </div>
 
         </form>
 
         <br />
-        <button b:onclick="clientLogin()" type="button" class="btn btn-primary btn-lg">Login</button>
-        <div style="text-align: center;color: red;margin-top: 20px" b:bind="loginError"></div>
+        <button b:onclick="login()" type="button" class="btn btn-primary btn-lg">Login</button>
+        <div style="text-align: center;color: red;margin-top: 20px" b:bind="error"></div>
 
     </b:if>
 
@@ -117,8 +119,8 @@
 
         </form>
 
-        <button b:onclick="clientRegister()" type="button" class="btn btn-primary btn-lg">Register</button>
-        <div style="text-align: center;color: red;margin-top: 20px" b:bind="loginError"></div>
+        <button b:onclick="register()" type="button" class="btn btn-primary btn-lg">Register</button>
+        <div style="text-align: center;color: red;margin-top: 20px" b:bind="error"></div>
 
     </b:if>
 
@@ -181,17 +183,19 @@
             if (typeof(controller.clientInit) == "function")
                 controller.clientInit(sessionExpiration);
 
-            if (bindster)
-                bindster.stop();
-
             console.log("creating bindster binding");
 
-            bindster = new Bindster(null, null, controller, null, true);
-            bindster.alert = function (msg) {
-                //controller.serverLog(msg);
-                alert(msg);
+            if (!bindster) {
+                bindster = new Bindster(controller, null, controller, null, true);
+                bindster.alert = function (msg) {
+                    //controller.serverLog(msg);
+                    alert(msg);
+                }
+                bindster.start();
+            } else {
+                bindster.setModel(controller)
+                bindster.setController(controller);
             }
-            bindster.start();
         },
 
         // Render after server data, injecting new model if needed

@@ -23,6 +23,8 @@ module.exports.project = function (objectTemplate, getTemplate)
 			this.role = role;
 			this.person = person;
 			this.created = new Date();
+		},
+		save: function() {
 		}
 
 	});
@@ -79,13 +81,35 @@ module.exports.project = function (objectTemplate, getTemplate)
 			release.date = date;
 			this.releases.push(release);
 		},
+
 		getRelease: function (name) {
 			for (var ix = 0; ix < this.releases.length; ++ix)
 				if (name == this.releases[ix].name)
 					return this.releases[ix];
 			return null;
-		}
+		},
 
+		save: function (authenticatedPerson)
+		{
+			// Assume we are tainted, make sure everything exists at this point in time
+			return 	(Project.getFromPersistWithId(this._id)).then( function(project)
+			{
+				return Person.getFromPersistWithId(this.owner ? this.owner._id : null).then(function(person)
+				{
+					if (!project)  // Handle new case
+						project = new Project(authenticatedPerson);
+
+					project.name = this.name;
+					project.description = this.description;
+					project.owner = person;
+					return project.persistSave();
+
+				}.bind(this));
+			}.bind(this));
+		},
+		remove: function () {
+			return this.persistDelete();
+		}
 	});
 
 	ProjectRelease.mixin(

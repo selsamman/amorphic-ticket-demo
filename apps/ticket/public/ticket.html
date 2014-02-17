@@ -9,7 +9,7 @@
 <form class="form-horizontal" role="form">
 
     <div class="form-group">
-        <b:textfield b:bind="ticket.title" id="title" lcols="2" fcols="10" text="Title" label="Title"></b:textfield>
+        <b:textfield b:bind="ticket.title" id="title" lcols="2" fcols="10" text="Title" label="Title" focus="1"></b:textfield>
     </div>
 
     <div class="form-group">
@@ -29,4 +29,39 @@
     </div>
 
 </form>
+
+<form class="form-horizontal" role="form">
+
+    <div class="form-group">
+        <b:memofield b:bind="comment" id="comment" lcols="2" fcols="10" text="Comment" label="Comment"></b:memofield>
+        <button b:onclick="ticket.addComment();comment=''" type="button" class="btn btn-primary btn-lg">Save</button>
+        <button b:showif="!comment" b:onclick="saveTicket()" type="button" class="btn btn-primary btn-lg">Approve</button>
+    </div>
+
+
+</form>
+
+<div class="container">
+    <table class="table" b:showif="ticket.ticketItems > 0">
+        <thead>
+        <tr>
+            <th>Created</th>
+            <th>By</th>
+            <th>Comment</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr b:iterateon="ticketItem" b:iteratewith="row">
+            <td b:bind="row.created"></td>
+            <td b:bind="row.creator.getFullName()"></td>
+            <td>
+                <span b:showif="row instanceof ticketItemComment" b:bind="row.text"></span>
+                <span b:showif="row instanceof ticketItemApproval"><strong>Approved</strong></span>
+                </span>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+</div>
 
