@@ -91,4 +91,3 @@ Q.all(promises).then( function () {
 
 	app.listen(nconf.get('port'));
 });
-
