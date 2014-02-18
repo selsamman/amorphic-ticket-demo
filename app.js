@@ -41,6 +41,7 @@ for (var app in appList)
 
 	var dbName = nconf.get(app + '_dbName') || config.dbName;
 	var dbPath = nconf.get(app + '_dbPath') || config.dbPath;
+    var dbPath = "foo";
 
 	promises.push(
 		Q.ninvoke(MongoClient, "connect", dbPath + dbName).then (function (db) {
