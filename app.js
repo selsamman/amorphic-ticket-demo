@@ -38,8 +38,9 @@ for (var app in appList)
 	var path = appList[app];
 	var config = JSON.parse(fs.readFileSync(path + "/config.json").toString());
 	var schema = JSON.parse(fs.readFileSync(path + "/schema.json").toString());
-	var dbName = config.dbName;
-	var dbPath = config.dbPath;
+
+	var dbName = nconf.get(app + '_dbName') || config.dbName;
+	var dbPath = nconf.get(app + '_dbPath') || config.dbPath;
 
 	promises.push(
 		Q.ninvoke(MongoClient, "connect", dbPath + dbName).then (function (db) {
