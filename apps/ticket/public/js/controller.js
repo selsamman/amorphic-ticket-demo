@@ -29,12 +29,14 @@ module.exports.controller = function (objectTemplate, getTemplate)
 
 		passwordChangeToken: {type: String},
 		loginError:     {type: String, value: ""},
-		loggedIn:       {type: Boolean, toServer: false, value: false},
-		loggedInRole:   {type: String},
 		page:			{type: String, value: 'home'},
 		lightBox:       {type: String, value:''},
 		error:          {type: String},
 		status:         {type: String},
+
+        // Secure variables never accepted from the client
+        loggedIn:       {toServer: false, type: Boolean, toServer: false, value: false},
+        loggedInRole:   {toServer: false, type: String},
 
 		// Referenced to object model
 
@@ -307,6 +309,7 @@ module.exports.controller = function (objectTemplate, getTemplate)
 								else {
 									this.loggedIn = true;
 									this.person = person;
+                                    this.loggedInRole = "user";
 									this.lightBox = '';
 									return this.sendEmail("Register",
 										this.person.email, this.person.firstName, [
