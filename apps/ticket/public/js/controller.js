@@ -1,42 +1,25 @@
 module.exports.controller = function (objectTemplate, getTemplate)
 {
+    // Application Modules
 	var BaseController = getTemplate('./baseController.js').BaseController;
-
 	var Person = getTemplate('./person.js').Person;
 	var Project = getTemplate('./project.js').Project;
 	var Ticket = getTemplate('./ticket.js').Ticket;
 
+    // Non-Semotus modules
 	if (typeof(require) != "undefined") {
 		Q = require('q');  // Don't use var or js optimization will force local scope
-		var dbname =  objectTemplate.config.db;
 		var crypto = require('crypto');
 		var _ = require('./lib/underscore');
 	}
 
-	Controller = BaseController.extend(
+    Controller = BaseController.extend(
 	{
 
-		// Intermediate data
-
-		firstName:      {type: String, value: "", length: 50, rule: ["name", "required"]},
-		lastName:       {type: String, value: "", length: 50, rule: ["name", "required"]},
-		email:          {type: String, value: "", length: 50, rule: ["text", "email", "required"]},
-		password:       {isLocal: true, type: String, value: ""},
-		confirmPassword: {isLocal: true, type: String, value: ""},
-		newPassword:    {isLocal: true, type: String, value: ""},
-
-		// States
-
-		passwordChangeToken: {type: String},
-		loginError:     {type: String, value: ""},
 		page:			{type: String, value: 'home'},
 		lightBox:       {type: String, value:''},
 		error:          {type: String},
 		status:         {type: String},
-
-        // Secure variables never accepted from the client
-        loggedIn:       {toServer: false, type: Boolean, toServer: false, value: false},
-        loggedInRole:   {toServer: false, type: String},
 
 		// Referenced to object model
 
@@ -69,6 +52,35 @@ module.exports.controller = function (objectTemplate, getTemplate)
 				return true;
 			return false;
 		},
+
+
+        serverInit: function () {
+             var names = "";
+             Q.ninvoke(objectTemplate.getDB(), "collection", "ticket").then (function (collection) {
+                return Q.ninvoke(collection, "find", {}, {limit: 1}).then( function (cursor)
+                {
+                    var processed = 0;
+                    return Q.ninvoke(cursor, "count", false).then(function (count)
+                    {
+                         function sumTickets(cursor) {
+                            return Q.ninvoke(cursor, "toArray").then(function (tickets) {
+                                for (var ix = 0; ix < tickets.length; ++ ix)
+                                    names += tickets[ix].title + " ";
+                                processed += tickets.length;
+                                if (processed < count)
+                                    return Q.ninvoke(collection, "find", {}, {skip: processed, limit: 1}).then( function (cursor) {
+                                        return sumTickets(cursor);
+                                    });
+                                else
+                                    return "anythingbutapromise";
+                            })
+                        }
+                        return sumTickets(cursor);
+                    });
+                });
+            }).then (function () {console.log(names)});
+        },
+
 
 		/*
 		 * -------  Ticket functions ----------------------------------------------------------------
@@ -240,336 +252,6 @@ module.exports.controller = function (objectTemplate, getTemplate)
 					this.people = people;
 				}.bind(this)).fail(function (err) {
 					this.log(0, "Error fetching people " + err.toString() + err.stack ? err.stack : "");
-				}.bind(this))
-		}},
-
-		login: function () {
-			var password = this.password;
-			this.password = "";
-			if(!this.hasErrors())
-				this.publicLogin(password)
-		},
-		logout: function () {
-			this.userAuthenticatedLogout();
-		},
-		register: function (doVerify) {
-			if (this.password != this.confirmPassword)
-				this.setError(this, 'confirmPassword', {message: "Passwords must match"});
-			else {
-				var password = this.password;
-				if(!this.hasErrors(password)) {
-					this.password = "";
-					this.confirmPassword = "";
-					this.publicRegister(password)
-				}
-			}
-		},
-		changePassword: function () {
-			if(!this.hasErrors()) {
-				var password = this.password;
-				var newPassword = this.newPassword;
-				this.password = '';
-				this.newPassword = '';
-				this.userAuthenticatedChangePassword(password, newPassword);
-			}
-		},
-		changeChangeEmail: function () {
-			if(!this.hasErrors()) {
-				var password = this.password;
-				this.password = '';
-				this.userAuthenticatedChangeEmailAddress(password);
-			}
-		},
-		changePasswordFromToken: function () {
-			var self = this;
-			if(!this.hasErrors()) {
-				var newPassword = this.newPassword;
-				this.newPassword = '';
-				return this.publicChangePasswordFromToken(newPassword);
-			}
-		},
-		/**
-		 * Create a new person if one does not exist and consider ourselves logged in
-		 *
-		 * @param password
-		 */
-		publicRegister: {on: "server", body: function (password)
-		{
-			this.error =  "";
-			return Person.countFromPersistWithQuery({email: this.email}).then( function (count)
-				{
-					if (count > 0)
-						this.error = "This email already registered";
-					else {
-						var person = new Person(this.email, this.firstName, "", this.lastName);
-						return person.register(password).then( function(error)
-							{
-								if (error)
-									this.error = error;
-								else {
-									this.loggedIn = true;
-									this.person = person;
-                                    this.loggedInRole = "user";
-									this.lightBox = '';
-									return this.sendEmail("Register",
-										this.person.email, this.person.firstName, [
-											{name: "FNAME", content: this.person.firstName},
-											{name: "LNAME", content: this.person.lastName}
-										]);
-								}
-							}.bind(this)).then (function () {
-								return this.setPage("home");
-							}.bind(this))		;
-					}
-				}.bind(this)).fail(function (err) {
-					this.log(0, "Error on registration " + err.toString() + err.stack ? err.stack : "");
-				}.bind(this))
-		}},
-
-
-		publicLogin: {on: "server", body: function(password)
-		{
-			this.error =  "";
-			if (this.loggedIn) {
-				this.error = "Already logged in"
-				return false;
-			}
-			return Person.getFromPersistWithQuery({email: this.email}).then( function (persons)
-				{
-					if (persons.length == 0) {
-						this.error =  "Invalid email or password";
-						this.log(1, "Log In attempt for " + this.email + " failed (invalid email)");
-						return true;
-					}
-					var person = persons[0];
-					return person.authenticate(password).then( function(authenticated)
-					{
-						if (authenticated) {
-							this.loggedIn = true;
-							this.loggedInRole = "user";
-							this.person = person;
-							this.lightBox = '';
-							return this.setPage("home");
-						} else {
-							this.error = "Invalid email or password";
-							return true;
-						}
-
-					}.bind(this))
-				}.bind(this)).fail( function (err)	{
-					this.log(0, "Error on login " + err.toString() + (err.stack ? err.stack : ""));
-				}.bind(this));
-		}},
-
-		userAuthenticatedLogout: {on: "server", body: function()
-		{
-			this.log(1, "Customer " + this.email + " logged out");
-
-			this.person = null;
-			this.people = null;
-			this.project = null;
-			this.projects = null;
-			this.ticket = null;
-			this.tickets = null;
-
-			this.loggedIn = false;
-			this.loggedInRole = null;
-
-			return this.setPage("home");
-		}},
-
-		userAuthenticatedChangeEmailAddress: {on: "server", body: function(password)
-		{
-			this.error =  "";
-			var oldEmail = this.model.email;
-			var newEmail = this.email;
-
-			return this.verifyOldPassword(password).then(function(correct)
-			{
-				if (correct) {
-					this.person.email = newEmail;
-					this.lightBox="changeemailconfirm";
-					return this.model.persistSave().then(function ()
-						{
-							return this.sendEmail("EmailChanged", oldEmail,
-								this.model.primaryCustomer.firstName, [
-									{name: "NEWLOGIN", content: newEmail},
-									{name: "FNAME", content: this.model.primaryCustomer.firstName}
-								]);
-
-						}.bind(this)).then(function ()
-						{
-							return this.sendEmail("EmailChanged", newEmail,
-								this.model.primaryCustomer.firstName [
-									{name: "NEWLOGIN", content: newEmail},
-									{name: "FNAME", content: this.model.primaryCustomer.firstName}
-									]);
-
-						}.bind(this)).fail(function (err) {
-							this.log(0, "Error on changePassword " + err.toString() + err.stack ? err.stack : "");
-						}.bind(this))
-				}
-			}.bind(this));
-		}},
-
-		/**
-		 * Change the password for a logged in user verifying old password
-		 */
-		userAuthenticatedPassword: {on: "server", body: function(oldPassword, password)
-		{
-			this.error =  "";
-			return !this.loggedIn || this.getHash(password, this.person.passwordSalt).then (function(hash)
-				{
-					if(this.person.passwordHash === hash) {
-						this.error = "Invalid old password";
-						return false;
-					} else {
-						var error = this.validateNewPassword(password);
-						if (error) {
-							this.error = error;
-							return;
-						}
-						// Create new salt and hash and then just log you in
-						return this.getSalt().then(function (salt)
-							{
-								this.person.passwordSalt = salt;
-								return this.getHash(password, salt);
-
-							}.bind(this)).then(function (hash)
-							{
-								this.person.passwordHash = hash;
-								this.lightBox = "changepasswordconfirm";
-								return this.save();
-
-							}.bind(this)).then(function ()
-							{
-								this.log(1, "Changed password for " + this.person.email);
-								return this.sendEmail("PasswordChanged",
-									this.person.email, this.person.primaryCustomer.firstName,
-									[{name: "FNAME", content: this.person.primaryCustomer.firstName}]);
-							}.bind(this));
-					}
-
-				}.bind(this)).fail(function (err)
-				{
-					this.log(0, "Error on changePassword " + err.toString() + err.stack ? err.stack : "");
-					return Q.fcall(function () {return "Error"});
-
-				}.bind(this))
-		}},
-
-		/**
-		 * Request that an email be sent with a password change link
-		 */
-		publicRequestPasswordChange: {on: "server", body: function()
-		{
-			this.error =  "";
-			this.log(1, "Request password reset for " + this.email);
-			return Person.getFromPersistWithQuery({email: this.email}).then(function (models)
-			{
-				var model = models[0];
-				if (model)
-					return this.getSalt().then (function (token) {
-						model.passwordChangeToken = token;
-						var now = new Date();
-						now.setDate(now.getDate() + 1);
-						model.passwordChangeExpires = now;
-						return model.persistSave().then (function()
-							{
-								return this.sendEmail("ChangePassword",
-									this.email, model.primaryCustomer.firstName, [
-										{name: "RESET", content: "https://www.your server.com?resetpassword&email=" +
-											this.email + "&token=" + token},
-										{name: "FNAME", content: model.primaryCustomer.firstName}
-									]);
-
-							}.bind(this)).then (function ()
-							{
-								this.lightBox = 'forgot2';
-
-							}.bind(this));
-					}.bind(this));
-				else {
-					this.error = "We have no record of that Email address";
-					return "Invalid EMail";
-				}
-
-			}.bind(this)).fail(function (err)
-			{
-				this.log(0, "Error on changePassword " + err.toString() + err.stack ? err.stack : "");
-				return Q.fcall(function () {return "Error"});
-
-			}.bind(this))
-		}},
-
-		/**
-		 * Change the password given the token generated from requestPasswordChange
-		 * or simply the fact that we are logged in
-		 */
-		changePasswordFromToken: {on: "server", body: function(password)
-		{
-			this.error =  "";
-			return Application.getFromPersistWithQuery({email:this.email}).then(function (customers)
-				{
-					if (customers.length < 1) {
-						this.error = "Invalid password change link - make sure you copied correctly from the email";
-						return false
-					}
-					var model = customers[0];
-					// You must logged in or the token must match and be unexpired
-					if (this.passwordChangeToken != model.passwordChangeToken ||
-						(new Date()).getTime() > model.passwordChangeExpires.getTime()) {
-						this.error = "Invalid password change - may have expired";
-						return null;
-					} else {
-						// Validate password
-						var error = this.validateNewPassword(password);
-						if (error) {
-							this.error = error;
-							return false;
-						}
-						// Create new salt and hash and then just log you in
-						return this.getSalt().then(function (salt)
-							{
-								customers[0].passwordSalt = salt;
-								return this.getHash(password, salt);
-
-							}.bind(this)).then(function (hash)
-							{
-								this.customerId = model._id.toString();
-								this.model = customers[0];
-								this.previousProgress = this.model.progress;
-								this.model.passwordChangeToken = null;
-								this.model.passwordHash = hash;
-								this.loggedIn = true;
-								this.lightBox = "changepasswordconfirm";
-								this.email = this.model.email;
-								console.log(this.lightBox);
-								return this.model.persistSave();
-
-							}.bind(this)).then(function ()
-							{
-								this.log(1, "Changed password for " + this.model.email);
-								return this.setPage(this.model.lastPageVisited);
-
-							}.bind(this)).then(function ()
-							{
-								return this.sendEmail("PasswordChanged",
-									this.model.email, this.model.primaryCustomer.firstName,
-									[{name: "FNAME", content: this.model.primaryCustomer.firstName}]);
-
-							}.bind(this)).then(function ()
-							{
-								return true;
-
-							}.bind(this))
-					}
-
-				}.bind(this)).fail(function (err)
-				{
-					this.log(0, "Error on changePasswordFromToken " + err.toString() + err.stack ? err.stack : "");
-					return Q.fcall(function () {return "Error"});
-
 				}.bind(this))
 		}},
 
@@ -791,6 +473,6 @@ module.exports.controller = function (objectTemplate, getTemplate)
 
 	});
 
-	return {Controller: Controller};
+    return {Controller: Controller};
 }
 

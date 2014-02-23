@@ -2,5 +2,12 @@
 	"dbPath":       "mongodb://localhost:27017/",
 	"dbName":       "ticket",
 	"dbTestName":   "ticket_test",
-	"ver":          "0"
+	"ver":          "0",
+    "mixins":      {
+        "userman":  {
+            "require": "semotus-userman",
+            "controller": {"require": "controller", "template": "Controller"},
+            "principal": {"require" : "person", "template": "Person"}
+        }
+    }
 }

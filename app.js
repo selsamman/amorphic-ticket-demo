@@ -53,7 +53,7 @@ for (var app in appList)
 			}
 
 			semotus.establishApplication(app, path + '/public/js/controller.js', injectObjectTemplate,
-				sessionExpiration, objectCacheExpiration, memoryStore, null, config.ver);
+				sessionExpiration, objectCacheExpiration, memoryStore, null, config.ver, config);
 
 			return Q.fcall(function(){return true});
 		})
@@ -74,11 +74,15 @@ Q.all(promises).then( function () {
 			  .then (function (session) {
 				  response.setHeader("Content-Type", "application/javascript");
 				  response.setHeader("Cache-Control", "public, max-age=0");
-				  response.end("semotus.setInitialMessage(" + session.getServerConnectString() +");");
+				  response.end(
+                      "semotus.setConfig(" + session.getServerConfigString() +");" +
+                      "semotus.setInitialMessage(" + session.getServerConnectString() +");"
+                  );
 			  }).done();
 		  }
 	 })
 	.use(semotus.router)
+    .use('/modules/', connect.static(__dirname + "/node_modules"))
 	.use('/semotus/', connect.static(__dirname + "/node_modules/semotus"));
 
 	for (appName in appList) {
