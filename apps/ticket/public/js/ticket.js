@@ -9,9 +9,9 @@ module.exports.ticket = function (objectTemplate, getTemplate)
 		title:              {type: String, value: null},
 		description:        {type: String, value: ""},
 		created:            {type: Date, value: null, rule: ["datetime"]},
-		creator:            {type: Person},
-		project:            {type: Project},
-		release:            {type: ProjectRelease},
+		creator:            {type: Person, fetch: true},
+		project:            {type: Project, fetch: true},
+		release:            {type: ProjectRelease, fetch: true},
 
 		init: function (person, project, title, description, release) {
 			this.title = title || null;
@@ -67,7 +67,7 @@ module.exports.ticket = function (objectTemplate, getTemplate)
 	 */
 	var TicketItem = objectTemplate.create("ticketItem:ticketItem",
 	{
-		creator:            {type: Person},
+		creator:            {type: Person, fetch: true},
 		created:            {type: Date},
 		ticket:             {type: Ticket},
 
@@ -128,7 +128,7 @@ module.exports.ticket = function (objectTemplate, getTemplate)
 
 	Ticket.mixin(
 	{
-		ticketItems:        {type: Array, of: TicketItem, value: []},
+		ticketItems:        {type: Array, of: TicketItem, value: [], fetch: true},
 		addComment: {on: "server", body: function (person, text) {
 			var item = new TicketItemComment(this, person, text);
 			this.ticketItems.push(item);

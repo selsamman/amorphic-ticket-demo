@@ -30,9 +30,10 @@
 
 </form>
 
+<b:if test="false">
 <form class="form-horizontal" role="form">
 
-    <div class="form-group">
+    <div class="form-group" b:show="false">
         <b:memofield b:bind="comment" id="comment" lcols="2" fcols="10" text="Comment" label="Comment"></b:memofield>
         <button b:onclick="ticket.addComment();comment=''" type="button" class="btn btn-primary btn-lg">Save</button>
         <button b:showif="!comment" b:onclick="saveTicket()" type="button" class="btn btn-primary btn-lg">Approve</button>
@@ -40,7 +41,8 @@
 
 
 </form>
-
+</b:if>
+        
 <div class="container">
     <table class="table" b:showif="ticket.ticketItems > 0">
         <thead>

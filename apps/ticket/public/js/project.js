@@ -17,7 +17,7 @@ module.exports.project = function (objectTemplate, getTemplate)
 		role:               {type: String,  values: ["manager", "developer"]},
 		created:            {type: Date, rule: ["datetime"]},
 	    removed:            {type: Date, value: null},
-		person:             {type: Person},
+		person:             {type: Person, fetch: true},
 
 		init: function(role, person) {
 			this.role = role;
@@ -35,10 +35,10 @@ module.exports.project = function (objectTemplate, getTemplate)
 		name:               {type: String, value: "", length: 40, rule: ["name", "required"]},
 		description:        {type: String, value: ""},
 		created:            {type: Date, rule: ["datetime"]},
-		creator:            {type: Person},
-		owner:              {type: Person},
-		roles:              {type: Array, of: ProjectRole, value: []},
-		releases:           {type: Array, of: ProjectRelease, value: []},
+		creator:            {type: Person, fetch: true},
+		owner:              {type: Person, fetch: true},
+		roles:              {type: Array, of: ProjectRole, value: [], fetch: true},
+		releases:           {type: Array, of: ProjectRelease, value: [], fetch: true},
 
 		init: function (person, name) {
 			this.name = name || null;
