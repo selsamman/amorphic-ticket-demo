@@ -40,5 +40,11 @@
 			"owner":              {"template": "Person", "id": "owner_id"},
 			"creator":            {"template": "Person", "id": "creator_id"}
 		}
-	}
+	},
+    "controller": {
+        "queries": {
+            "tickets":            {},
+            "searchTickets":      {"query": {}}
+        }
+    }
 }

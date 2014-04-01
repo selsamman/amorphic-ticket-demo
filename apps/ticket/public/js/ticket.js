@@ -6,58 +6,66 @@ module.exports.ticket = function (objectTemplate, getTemplate)
 
 	var Ticket = objectTemplate.create("ticket:ticket",
 	{
-		title:              {type: String, value: null},
-		description:        {type: String, value: ""},
-		created:            {type: Date, value: null, rule: ["datetime"]},
-		creator:            {type: Person, fetch: true},
-		project:            {type: Project, fetch: true},
-		release:            {type: ProjectRelease, fetch: true},
+		title:              {type: String, rule: ["required"]},
+        titleSet:           {on: "server", body: function(value) {
+            if (value.match(/shit|piss|fuck|cocksucker|motherfucker|tits/))
+                throw "No foul language as per George Carlin";
+            this.title = value;
+        }},
+		description:        {type: String},
+		created:            {toServer: false, type: Date},
+		creator:            {toServer: false, type: Person, fetch: true},
+		project:            {toServer: false, type: Project, fetch: true},
+		release:            {toServer: false, type: ProjectRelease, fetch: true},
 
-		init: function (person, project, title, description, release) {
+		init: function (title, description) {
 			this.title = title || null;
-			this.creator = person || null;
-			this.project = project || null
-			this.release = release || null;
-			this.created = new Date();
-		},
+            this.description = description || null;
+            this.creator = this.getSecurityContext().principal;
+ 		},
 
-		setProject: function(project) {
-			this.project = project || null;
-		},
+        validateServerCall: function () {
+            return this.getSecurityContext() ? true : false;
+        },
 
-		setRelease: function (release) {
-			if (release && release.project != this.project)
-				throw "Attempt to set ticket project release that does not belong to project";
-			this.release = release || null;
-		},
+		projectSet: {on: "server", body: function(project)
+        {
+            return Project.getFromPersistWithId(project._id).then( function(project) {
+		        this.project = project || null;
+                return project;
+            }.bind(this));
+		}},
 
-		remove: function (ticket) {
+		releaseSet: {on: "server", body: function (releaseOrId)
+        {
+            var releaseId = typeof(releaseOrId) == 'string' ? releaseOrId : releaseOrId._id
+            return ProjectRelease.getFromPersistWithId(releaseId).then( function(release) {
+                if (release && release.project != this.project)
+				    throw "Attempt to set ticket project release that does not belong to project";
+			    this.release = release || null;
+                return release;
+            });
+		}},
+
+		remove:  {on: "server", body: function ()
+        {
 			for (var ix = 0; ix < this.ticketItems; ++ix)
-				this.ticketItems[ix].remove;
+				this.ticketItems[ix].remove();
 			return this.persistDelete();
-		},
+		}},
 
-		save: function (authenticatedPerson)
+		save: function ()
 		{
-			// Assume we are tainted, make sure everything exists at this point in time
-			return Ticket.getFromPersistWithId(this._id || null).then( function(ticket)
-			{
-				return Project.getFromPersistWithId(this.project ? this.project._id : null).then( function(project)
-				{
-					return Project.getFromPersistWithId(this.release ? this.release._id__ : null).then( function(release)
-					{
-						if (!ticket)  // Handle new case
-							ticket = new Ticket(authenticatedPerson);
+            if (!this.title)
+                throw "Need a title";
 
-						ticket.title = this.title;
-						ticket.description = this.description;
-						ticket.setProject(project);
-						ticket.setRelease(release);
-						return ticket.persistSave();
+            if (!this.created)
+                this.created = new Date();
 
-					}.bind(this));
-				}.bind(this));
-			}.bind(this));
+            if (!this.creator)
+                this.creator = this.getSecurityContext().principal;
+
+            return this.persistSave();
 		}
 	});
 
@@ -67,9 +75,9 @@ module.exports.ticket = function (objectTemplate, getTemplate)
 	 */
 	var TicketItem = objectTemplate.create("ticketItem:ticketItem",
 	{
-		creator:            {type: Person, fetch: true},
-		created:            {type: Date},
-		ticket:             {type: Ticket},
+		creator:            {toServer: false, type: Person, fetch: true},
+		created:            {toServer: false, type: Date},
+		ticket:             {toServer: false, type: Ticket},
 
 		init: function (ticket, person) {
 			this.ticket = ticket;
@@ -102,6 +110,8 @@ module.exports.ticket = function (objectTemplate, getTemplate)
 		init: function(ticket, person, text) {
 			TicketItem.call(this, ticket, person);
 			this.text = text || "";
+            this.creator = this.getSecurityContext().principal;
+            this.created = new Date();
 		},
 		addAttachment: function(name, data) {
 			var attachment = new TicketItemAttachment(this, name, data);
@@ -109,8 +119,8 @@ module.exports.ticket = function (objectTemplate, getTemplate)
 			return attachment;
 		},
 		remove: function () {
-			for (var ix = 0;ix < this.ticketItem.length;++ix)
-				this.ticketItem[ix].persistDelete();
+			for (var ix = 0;ix < this.attachments.length;++ix)
+				this.attachments[ix].persistDelete();
 			this.persistDelete();
 		}
 	});
@@ -128,13 +138,18 @@ module.exports.ticket = function (objectTemplate, getTemplate)
 
 	Ticket.mixin(
 	{
-		ticketItems:        {type: Array, of: TicketItem, value: [], fetch: true},
-		addComment: {on: "server", body: function (person, text) {
-			var item = new TicketItemComment(this, person, text);
-			this.ticketItems.push(item);
-			return item;
-		}},
-		addApproval: function (person) {
+		ticketItems:        {toServer: false, type: Array, of: TicketItem, value: [], fetch: true},
+
+        addComment: {on: "server", body: function (comment) {
+            if (!this.created)
+                throw "create ticket first";
+            this.ticketItems.push(new TicketItemComment(this, this.getSecurityContext().person, comment));
+        }},
+
+		addApproval:  {on: "server", body: function () {
+            if (!this.created)
+                throw "create ticket first";
+            var person = this.getSecurityContext().person();
 			if (!this.project)
 				throw "cannot approve ticket that is not assigned to a project";
 			if (!this.project.getRole( "manager", person))
@@ -142,7 +157,7 @@ module.exports.ticket = function (objectTemplate, getTemplate)
 			var item = new TicketItemApproval(this, person);
 			this.ticketItems.push(item);
 			return item;
-		}
+		}}
 	});
 
 	return {

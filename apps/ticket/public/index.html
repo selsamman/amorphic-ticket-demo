@@ -6,7 +6,7 @@
 <meta name="keywords" content="semotus bindster nodejs mongodb">
 <meta name="title" content="Semotus sample application">
 
-<script src="js/lib/q.js?ver=0"></script>
+<script src="modules/q/q.js?ver=0q.js?ver=0"></script>
 <script src="js/lib/underscore.js?ver=0"></script>
 <script src="js/lib/bindster.js?ver=0"></script>
 <script src="semotus/objectTemplate.js?ver=0"></script>
@@ -131,10 +131,7 @@
     // Bind bindster to semotus
     semotus.establishClientSession(
 
-         // Retrieve ObjectTemplate for root object, the controller
-        function () {
-            return Controller;
-        },
+        "Controller",
 
          // Establish a new session whether first time or because of expiry / server restart
         function (newController, sessionExpiration) {
@@ -142,8 +139,6 @@
             if (controller && typeof(controller.shutdown) == "function")
                 controller.shutdown();
             controller = newController;
-            if (typeof(controller.clientInit) == "function")
-                controller.clientInit(sessionExpiration);
 
             console.log("creating bindster binding");
 
@@ -153,17 +148,16 @@
                     //controller.serverLog(msg);
                     alert(msg);
                 }
+                if (typeof(controller.clientInit) == "function")
+                    controller.clientInit(sessionExpiration);
                 bindster.start();
             } else {
                 bindster.setModel(controller)
                 bindster.setController(controller);
+                if (typeof(controller.clientInit) == "function")
+                    controller.clientInit(sessionExpiration);
+                controller.refresh(1);
             }
-        },
-
-        // Render after server data, injecting new model if needed
-        function () {
-            controller.messageRefresh = true; //Don't force save
-            controller.refresh()
         },
 
         __ver,

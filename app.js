@@ -26,7 +26,10 @@ var dbname = nconf.get('dbname');
 // redis is more desirable
 var MemoryStore = connect.session.MemoryStore;
 var memoryStore = new MemoryStore;
-var sessionRouter = connect.session({store: memoryStore, secret: 'Ey0veeljPcLsHitdxCG2',cookie: {maxAge: sessionExpiration}})
+var sessionRouter = connect.session(
+    {store: memoryStore, secret: 'Ey0veeljPcLsHitdxCG2',
+    cookie: {maxAge: sessionExpiration}, rolling: true}
+);
 
 // Initialize applications
 
@@ -60,9 +63,21 @@ for (var app in appList)
 	);
 }
 
-Q.all(promises).then( function () {
-	var app = connect()
-	.use(connect.cookieParser())
+Q.all(promises).then( function ()
+{
+	var app = connect();
+
+    for (var appName in appList) {
+        var url = appName == mainApp ? "/" : "/" + appName;
+        var path = __dirname + "/" + appList[appName] + "/public";
+        app.use(url, connect.static(path,{index: "index.html"}));
+        console.log("Url " + url + " connected to " + path);
+    }
+
+    app
+    .use('/modules/', connect.static(__dirname + "/node_modules"))
+    .use('/semotus/', connect.static(__dirname + "/node_modules/semotus"))
+    .use(connect.cookieParser())
 	.use(connect.bodyParser())
 	.use(sessionRouter)
 	.use('/semotus/init/' , function (request, response) {
@@ -70,7 +85,7 @@ Q.all(promises).then( function () {
 		  if(request.originalUrl.match(/([A-Za-z0-9_]*)\.js/)) {
 			  var appName = RegExp.$1;
 			  console.log("Establishing " + appName);
-			  semotus.establishServerSession(request, appName, true)
+			  semotus.establishServerSession(request, appName, "initial")
 			  .then (function (session) {
 				  response.setHeader("Content-Type", "application/javascript");
 				  response.setHeader("Cache-Control", "public, max-age=0");
@@ -81,17 +96,8 @@ Q.all(promises).then( function () {
 			  }).done();
 		  }
 	 })
-	.use(semotus.router)
-    .use('/modules/', connect.static(__dirname + "/node_modules"))
-	.use('/semotus/', connect.static(__dirname + "/node_modules/semotus"));
+	.use(semotus.router);
 
-	for (appName in appList) {
-		console.log("bar");
-		var url = appName == mainApp ? "/" : "/" + appName;
-		var path = __dirname + "/" + appList[appName] + "/public";
-		app.use(url, connect.static(path,{index: "index.html"}));
-		console.log("Url " + url + " connected to " + path);
-	}
 
 	app.listen(nconf.get('port'));
 });

@@ -40,13 +40,15 @@ module.exports.project = function (objectTemplate, getTemplate)
 		roles:              {type: Array, of: ProjectRole, value: [], fetch: true},
 		releases:           {type: Array, of: ProjectRelease, value: [], fetch: true},
 
-		init: function (person, name) {
+		init: function (name) {
 			this.name = name || null;
-			this.creator = person;
-			this.created = new Date();
 		},
 
-		getRole: function (role, person) {
+        validateServerCall: function () {
+            return this.getSecurityContext().person ? true : false;
+        },
+
+        getRole: function (role, person) {
 			for (var ix = 0; ix < this.roles.length; ++ix)
 				if (role == this.roles[ix].role && person == this.roles[ix].person)
 					return this.roles[ix];

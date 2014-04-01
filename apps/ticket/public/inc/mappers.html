@@ -40,7 +40,9 @@
     <label for="__id__" class="col-md-__lcols__ control-label" b:bind="'__label__'"></label>
     <div class="col-md-__fcols__">
         <input b:bind="__bind__" type="text" class="form-control" id="__id__" b:placeholder="__text__" b:trigger="if(typeof(__bind__Trigger) == 'function'){__bind__Trigger()}" b:when="__when__" b:onchange="__whenchanged__" b:focus="__focus__" b:onenter="__onenter__" />
+        <span style="color:red" b:showif="isError('__bind__')"><br/><span b:binderror="__bind__"></span></span>
     </div>
+
 </b:mapper>
 
 <b:mapper tag="memofield">
@@ -57,6 +59,15 @@
     </div>
 </b:mapper>
 
+<b:mapper tag="errorfield">
+    <b:if test="__bind__">
+        <label for="__id__" class="col-md-__lcols__ control-label" b:bind="'__label__'"></label>
+        <div class="col-md-__fcols__">
+            <p b:bind="__bind__" style="color: red" type="text" class="form-control-static" id="__id__" ></p>
+        </div>
+    </b:if>
+</b:mapper>
+
 <b:mapper tag="passwordfield">
     <label for="__id__" class="col-md-__lcols__ control-label" b:bind="'__label__'"></label>
     <div class="col-md-__fcols__">
@@ -67,7 +78,7 @@
 <b:mapper tag="objectselectfield">
     <label for="__id__" class="col-md-__lcols__ control-label" b:bind="'__label__'"></label>
     <div class="col-md-__fcols__">
-        <select b:bind="__bind__" class="form-control" id="__id__" b:trigger="if(typeof(__bind__) == 'string'){__bind__ = _.findWhere(__values__, {_\\_id_\\_:__bind__}) || null}" b:onchange="__whenchanged__" b:fill="__values__" b:fill-key="value._\\_id_\\_" b:fill-value="value.__text__" b:nullselect="__empty__"></select>
+        <select b:bind="__bind__" class="form-control" id="__id__" b:onchange="__whenchanged__" b:fill="__values__" b:fill-key="value._\\_id_\\_" b:fill-value="value.__text__" b:nullselect="__empty__"></select>
     </div>
 </b:mapper>
 

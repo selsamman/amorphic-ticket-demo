@@ -1,7 +1,7 @@
 {
     "name": "semotus",
     "subdomain": "semotus",
-    "version": "0.0.3-1",
+    "version": "0.0.9",
     "engines": {
         "node": "0.10.x"
     },
@@ -13,6 +13,11 @@
         "mongodb": "1.3.x",
         "nconf": "0.6.x",
         "connect": "2.6.x",
-        "semotus": "0.0.x"
-    }
+        "semotus": "0.0.x",
+        "semotus-userman": "0.0.x"
+    },
+    "bundledDependencies": [
+        "semotus",
+        "semotus-userman"
+    ]
 }

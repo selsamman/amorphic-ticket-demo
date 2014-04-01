@@ -9,19 +9,18 @@ module.exports.controller = function (objectTemplate, getTemplate)
     // Non-Semotus modules
 	if (typeof(require) != "undefined") {
 		Q = require('q');  // Don't use var or js optimization will force local scope
-		var crypto = require('crypto');
-		var _ = require('./lib/underscore');
+		_ = require('./lib/underscore');
 	}
 
     Controller = BaseController.extend(
 	{
-
 		page:			{type: String, value: 'home'},
 		lightBox:       {type: String, value:''},
 		error:          {type: String},
 		status:         {type: String},
+        comment:        {type: String},
 
-		// Referenced to object model
+		// References to the model
 
 		ticket:         {type: Ticket},
 		tickets:        {type: Array, of: Ticket},
@@ -33,128 +32,68 @@ module.exports.controller = function (objectTemplate, getTemplate)
 		project:        {type: Project},
 		projects:       {type: Array, of: Project},
 
-		// Housekeeping data
-
-		heartBeatInterval: {isLocal: true, type: Number, value: 0},
-		activity:          {isLocal: true, type: Boolean, value: true},
-		pageSaved:         {isLocal: true, type: Boolean, value: true},
-		sessionExpiration: {isLocal: true, type: Number, value: 0},
-		waitCount:          0, // seconds waiting for a pending call to complete
-
+        /**
+         * Called on object creation
+         */
 		init: function () {
 		},
-
-		validateServerCall: function (functionName) // called by semotus prior to anyfunction call
-		{
-			if (functionName.match(/^userAuthenticated/))
-				return this.loggedIn && this.loggedInRole == "user";
-			if (functionName.match(/^public/))
-				return true;
-			return false;
-		},
-
-
-        serverInit: function () {
-             var names = "";
-             Q.ninvoke(objectTemplate.getDB(), "collection", "ticket").then (function (collection) {
-                return Q.ninvoke(collection, "find", {}, {limit: 1}).then( function (cursor)
-                {
-                    var processed = 0;
-                    return Q.ninvoke(cursor, "count", false).then(function (count)
-                    {
-                         function sumTickets(cursor) {
-                            return Q.ninvoke(cursor, "toArray").then(function (tickets) {
-                                for (var ix = 0; ix < tickets.length; ++ ix)
-                                    names += tickets[ix].title + " ";
-                                processed += tickets.length;
-                                if (processed < count)
-                                    return Q.ninvoke(collection, "find", {}, {skip: processed, limit: 1}).then( function (cursor) {
-                                        return sumTickets(cursor);
-                                    });
-                                else
-                                    return "anythingbutapromise";
-                            })
-                        }
-                        return sumTickets(cursor);
-                    });
-                });
-            }).then (function () {console.log(names)});
-        },
-
 
 		/*
 		 * -------  Ticket functions ----------------------------------------------------------------
 		 */
 
-		getTickets: function () // Setup ticket collection and call server to fetch them if needed
+        // Setup ticket collection if needed and fetch tickets (allways return an array)
+		getTickets: function ()
 		{
 			if (!this.tickets) {
-				this.tickets = [];                      // New empty array
-				this.userAuthenticatedGetTickets();     // Page will be re-rendered when this returns
+				this.tickets = [];       // New empty array
+				this.fetchTickets();     // Page will be re-rendered when this returns
 			}
-			return this.tickets;                        // Always returns an array of tickets or empty array
+			return this.tickets;         // Always returns an array of tickets or empty array
 		},
 
-		saveTicket: function ()
-		{
-			this.userAuthenticatedSaveTicket().then(    // Save ticket on server and display results
-				function () {
-					this.message = "Ticket Saved at " + this.getDisplayTime();
-					this.error = "";
-				},
-				function (error) {
-					this.message = "";
-					this.error = error;
-				}
-			);
-		},
-
-		newTicket: function () {
-			this.ticket = new Ticket(this.person, this.project);
-			this.setPage('ticket');
-		},
-
-		deleteTicket: function () {
-			this.userAuthenticatedDeleteTicket();
-		},
-
-		userAuthenticatedGetTickets: {on: 'server', body: function()
+        // Retrieve tickets
+		fetchTickets: {on: 'server', body: function()
 		{
 			return Ticket.getFromPersistWithQuery({}).then( function (tickets) {
 				this.tickets = tickets;
 			}.bind(this));
 		}},
 
-		userAuthenticatedSaveTicket: {on: "server", body: function ()
+        // Create a new ticket and make it current
+        newTicket: function () {
+            this.ticket = new Ticket();
+            this.setPage('ticket');
+            this.error = null;
+        },
+
+        // Ask the ticket to save itself and update our list of tickets
+        saveTicket: {on: "server", validate: function () {return this.validate()}, body: function ()
 		{
 			if (this.ticket)
-				return this.ticket.save(this.person).then(function(ticket)
-				{
-					// Update with newly saved one or add to list
-					var ix = _.indexOf(this.tickets, this.ticket)
-					if (ix >= 0)
-						this.tickets.splice(ix, 1, ticket);
-					else
-						this.tickets.splice(0, 0, ticket);
-
-					this.ticket = ticket;
-
-				}.bind(this));
+				return this.ticket.save().then(function(error)	{
+                        if (_.indexOf(this.tickets, this.ticket) < 0) // Add to list
+    				        this.tickets.splice(0, 0, this.ticket);
+                        this.status = "Ticket Saved at " + this.getDisplayTime();
+                        this.error = null;
+				}.bind(this),
+                function (error) {
+                    this.error = error.message;
+                }.bind(this));
 		}},
 
-		userAuthenticatedDeleteTicket: {on: "server", body: function ()
+        // Ask the ticket to remove itself and update our list of tickets
+		deleteTicket: {on: "server", body: function ()
 		{
 			if (this.ticket)
-				return this.ticket.remove().then(function ()
-				{
-					// Remove from session
-					var ix = _.indexOf(this.tickets, this.ticket);
+				return this.ticket.remove().then(function () {
+					var ix = _.indexOf(this.tickets, this.ticket); // Remove from list
 					if (ix >= 0)
 						this.tickets.splice(ix, 1);
-					console.log("Deleting " + this.ticket.__id__ + " " + this.ticket.name);
 					this.ticket = null;
-				});
+                }.bind(this));
 		}},
+
 
 		/*
 		 * -------  Project functions ----------------------------------------------------------------
@@ -182,16 +121,10 @@ module.exports.controller = function (objectTemplate, getTemplate)
 
 		saveProject: function ()
 		{
-			this.userAuthenticatedSaveProject().then(
-				function () {
-					this.message = "Project saved at " + this.getDisplayTime();
-					this.error = "";
-				},
-				function (error) {
-					this.message = "";
-					this.error = error;
-				}
-			);
+			this.userAuthenticatedSaveProject().then(function () {
+                this.status = "Project saved at " + this.getDisplayTime();
+                this.error = "";
+            });
 		},
 
 		// Server Side
@@ -255,103 +188,90 @@ module.exports.controller = function (objectTemplate, getTemplate)
 				}.bind(this))
 		}},
 
-		log: function (level, text) {
-			(this.__template__.objectTemplate || RemoteObjectTemplate).log(level, text);
-		},
-
 /*
 * -------  Housekeeping ----------------------------------------------------------------------
 */
-
-		clientInit: {on: "client", body: function (sessionExpiration)
+		clientInit: function ()
 		{
-			if (sessionExpiration)
-				this.sessionExpiration = sessionExpiration;
+            this.attr(".currency", {format: this.formatDollar});
+            this.attr(".spin", {min: "{prop.min}", max: "{prop.max}"});
+            this.rule("text", {maxlength: "{prop.length}", validate: this.isText, format: this.formatText});
+            this.rule("numeric", {parse: this.parseNumber, format: this.formatText});
+            this.rule("name", {maxlength: "{prop.length}", validate: this.isName});
+            this.rule("email", {validate: this.isEmail});
+            this.rule("currency", {format:this.formatDollar, parse: this.parseCurrency});
+            this.rule("currencycents", {format:this.formatCurrencyCents, parse: this.parseCurrency});
+            this.rule("date", {format: this.formatDate, parse: this.parseDate});
+            this.rule("datetime", {format: this.formatDateTime, parse: this.parseDate});
+            this.rule("DOB", {format: this.formatDate, parse: this.parseDOB});
+            this.rule("SSN", {validate: this.isSSN});
+            this.rule("taxid", {validate: this.isTaxID});
+            this.rule("phone", {validate: this.isPhone});
+            this.rule("required", {validate: this.notEmpty});
+            this.rule("percent", {validate: this.isPercent, format: this.formatPercent});
+            this.rule("zip5", {validate: this.isZip5});
+            this.changePasswordCheck();
+        },
 
-			// Handle session expiration and auto-save
-			var self = this;
-			this.activity = true;
-			if (this.heartBeatInterval)
-				clearInterval(this.heartBeatInterval)
-			this.heartBeatInterval = setInterval(function () {self.heartBeat()}, 5000)
-			if (document.location.search.match(/resetpassword&email=(.*?)&token=(.*)/) &&
-				this.lightBox != 'changepasswordconfirm')
-			{
-				this.passwordChangeToken = RegExp.$2;
-				this.email = RegExp.$1;
-				this.lightBox='changepasswordtoken';
-				this.error = "";
-			}
-		}},
+        /**
+         * Security check on remote calls
+         *
+         * @param functionName
+         * @returns {Boolean} - whether to proceed with call
+         */
+        validateServerCall: function (functionName) // called by semotus prior to anyfunction call
+        {
+            if (functionName.match(/^public/))
+                return true;
+            return this.securityContext ? true : false;
+        },
 
-		shutdown: function () {
-			if (this.heartBeatInterval)
-				clearInterval(this.heartBeatInterval)
-			this.isShudown = true;
+
+        /**
+         * Called when the controller is created on the server
+         *
+         */
+        serverInit: function () {
+        },
+
+        /**
+         * Client is to expire, either reset or let infrastructure hande it
+         *
+         * @return {Boolean} - true if reset handled within controller, false to destroy/create controller
+         */
+        clientExpire: function () {
+            return false;
+        },
+
+        /**
+         * Called when controller destroyed so we can delete any resources (e.g. timers)
+         */
+        clientTerm: function () {
+        },
+
+        /**
+         * Called if an error thrown on server call that is not handled
+         */
+        handleRemoteError: function (error) {
+            this.error = error;
+        },
+
+        /**
+         * Called before any pass to render the UI
+         */
+		preRenderInitialize: function()
+        {
 		},
 
-		heartBeat: function () {
-			console.log('heartbeat');
-			if (this.activity && !this.pageSaved)
-				this.savePage();
-			else if (((new Date()).getTime() - semotus.lastServerInteraction) >
-				(this.sessionExpiration + 5000)) {
-				this.log(1, "session should expire now");
-				this.setPage('');
-				this.savePage();  // Will force a reset
-			}
-			this.activity = false;
-		},
-
-		preRenderInitialize: function() {
-			this.attr(".currency", {format: this.formatDollar});
-			this.attr(".spin", {min: "{prop.min}", max: "{prop.max}"});
-			this.rule("text", {maxlength: "{prop.length}", validate: this.isText, format: this.formatText});
-			this.rule("numeric", {parse: this.parseNumber, format: this.formatText});
-			this.rule("name", {maxlength: "{prop.length}", validate: this.isName});
-			this.rule("email", {validate: this.isEmail});
-			this.rule("currency", {format:this.formatDollar, parse: this.parseCurrency});
-			this.rule("currencycents", {format:this.formatCurrencyCents, parse: this.parseCurrency});
-			this.rule("date", {format: this.formatDate, parse: this.parseDate});
-			this.rule("datetime", {format: this.formatDateTime, parse: this.parseDate});
-			this.rule("DOB", {format: this.formatDate, parse: this.parseDOB});
-			this.rule("SSN", {validate: this.isSSN});
-			this.rule("taxid", {validate: this.isTaxID});
-			this.rule("phone", {validate: this.isPhone});
-			this.rule("required", {validate: this.notEmpty});
-			this.rule("percent", {validate: this.isPercent, format: this.formatPercent});
-			this.rule("zip5", {validate: this.isZip5});
-		},
-		/**
-		 * Called after each pass of Bindster to render DOM
-		 */
-		initialize: function () {
-			var foo = 1;
-		},
-
-		onprerender: function() {
-			var foo = 1;
-		},
-
-		/**
-		 * called by BINDster after a render.  Auto-save mechanism saves page if
-		 * any activity (that would cause a render) so we set that activity flag here.
-		 * We DON"T want to force a save if the render was caused by refreshing the
-		 * controller data.
-		 *
-		 * @param name
-		 */
-		onrender: function(name) {
-
-			if (this.messageRefresh)
-				this.messageRefresh = false;
-			else {
-				this.activity = true;
-				this.pageSaved = false;
-			}
-		},
-
-		setPage: {on: "client", body: function (page, force, subpage) {
+        /**
+         * Set the current page
+         *
+         * @param name of page
+         * @param not used
+         * @param subpage (bookmark)
+        */
+		setPage: {on: "client", body: function (page, force, subpage)
+        {
 			var url = page + (subpage ? "_" + subpage : "");
 			if (window.history && window.history.pushState) {
 				window.history.pushState({}, document.title, "/#" + url);
@@ -365,69 +285,24 @@ module.exports.controller = function (objectTemplate, getTemplate)
 			this.scrollTo = page;
 			if (typeof(this[page + 'Init']) == 'function')
 				this[page + 'Init']();
+            if (this.sessionExpired)
+                this.publicPing(); // Force new session
 		}},
 
-		savePage: function() {
-			if (this.isShudown)
-				return;
-			var self=this;
-			this.waitCount++;
-			if (this.waitCount == 10) {
-				console.log("Not able to save for 10 seconds - refreshing");
-				semotus.refreshSession();
-			}
-			if (this.waitCount == 20) {
-				this.oldrmode = this.lightBox;
-				this.lightBox = "offline";
-				this.refresh();
-				console.log("Not able to save for 20 seconds - going offline");
-			}
-			if (this.waitCount < 20)
-				if (RemoteObjectTemplate.getPendingCallCount() > 0) {
-					this.resaveTimeout = setTimeout(function () {self.savePage()}, 1000);
-					if (this.waitCount < 10)
-						console.log(RemoteObjectTemplate.getPendingCallCount() + " call(s) outstanding waiting to save page");
-				} else {
-					this.waitCount = 0;
-					this.publicSave();
-					this.pageSaved = true;
-				}
-		},
+        isPage: function(name) {
+            return this.page == name;
+        },
 
-		isPage: function(name) {
-			return this.page == name;
-		},
 
-		pageInit: function () {
-			this.postRenderTasks.push(function () {
-				$.placeholder.shim();
-			});
-			this.password = "";
-			this.confirmPassword = "";
-		},
-		/**
-		 *  Not clear what should be saved
-		 */
-		publicSave: {on: "server", body: function (updateMC)
-		{
-			if (this.projects)
-				for (var ix = 0; ix < this.projects.length; ++ix)
-					console.log(this.projects[ix].__id__ + " " + this.projects[ix].name);
-			if (this.tickets)
-				for (var ix = 0; ix < this.tickets.length; ++ix)
-					console.log(this.tickets[ix].__id__ + " " + this.tickets[ix].title);
+        log: function (level, text) {
+            (this.__template__.objectTemplate || RemoteObjectTemplate).log(level, text);
+        },
 
-		}},
-		clientSalt: function () {
-			return this.getSalt().then(function(m){alert(m)},function(m){alert("error: " + m)});
-		},
-		getSalt: {on: "server", body: function () {
-			return Q.ninvoke(crypto, 'randomBytes', 64).then( function (buf)
-			{
-				var x = x.y.z;
-				return buf.toString('hex')
-			});
-		}},
+        getDisplayTime: function () {
+            var date = new Date();
+            return (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear() + " " +
+                date.toTimeString().replace(/ .*/, '');
+        },
 
 		/**
 		 * Send an email with mandrill
