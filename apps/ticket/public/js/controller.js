@@ -14,7 +14,7 @@ module.exports.controller = function (objectTemplate, getTemplate)
 
     Controller = BaseController.extend(
 	{
-		page:			{type: String, value: 'home'},
+		page:			{type: String, value: ''},
 		lightBox:       {type: String, value:''},
 		error:          {type: String},
 		status:         {type: String},
@@ -211,6 +211,7 @@ module.exports.controller = function (objectTemplate, getTemplate)
             this.rule("percent", {validate: this.isPercent, format: this.formatPercent});
             this.rule("zip5", {validate: this.isZip5});
             this.changePasswordCheck();
+            this.setPage(this.page);
         },
 
         /**
@@ -276,7 +277,8 @@ module.exports.controller = function (objectTemplate, getTemplate)
 			if (window.history && window.history.pushState) {
 				window.history.pushState({}, document.title, "/#" + url);
 			} else {
-				document.location.pathname = '';
+                if (document.location.pathname != '/')
+				    document.location.pathname = '/';
 				document.location.hash = '#' + url;
 			}
 
@@ -285,9 +287,7 @@ module.exports.controller = function (objectTemplate, getTemplate)
 			this.scrollTo = page;
 			if (typeof(this[page + 'Init']) == 'function')
 				this[page + 'Init']();
-            if (this.sessionExpired)
-                this.publicPing(); // Force new session
-		}},
+ 		}},
 
         isPage: function(name) {
             return this.page == name;
