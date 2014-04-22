@@ -39,6 +39,14 @@ Person.inject(function () {
 	}
 });
 
+var securityPrincipal;
+
+ObjectTemplate.globalInject(function (obj) {
+    obj.getSecurityContext = function () {
+        return {principal: securityPrincipal};
+    }
+});
+
 before (function (done) {
 	Q.ninvoke(MongoClient, "connect", nconf.get('dbPath') + nconf.get('dbTestName')).then (function (dbopen) {
 		db = dbopen;
@@ -59,6 +67,10 @@ function clearCollection(collectionName) {
 
 describe("Ticket System Test Suite", function () {
 
+    // Variables global to test
+    var semotus_id;
+    var semotusProject;
+
 	it ("clears the ticket system", function (done) {
 		clearCollection("ticket").then(function (count) {
 			expect(count).to.equal(0);
@@ -75,95 +87,123 @@ describe("Ticket System Test Suite", function () {
 		});
 	});
 
-	describe("Persist Test", function ()
-	{
+    // Persist them (everything hangs off people so the whole graph gets added
 
-		// People
-		var sam = new Person("sam@elsamman.com", "Sam", "M", "Elsamman");
-		var karen = new Person("karen@elsamman.com", "Karen", "M", "Burke");
+    it("can create stuff", function (done)
+    {
+        // People
+        var sam = new Person("sam@elsamman.com", "Sam", "M", "Elsamman");
+        var karen = new Person("karen@elsamman.com", "Karen", "M", "Burke");
 
-		// Projects
-		var semotus = new Project(sam, "Semotus");
-		var travel = new Project(karen, "Travel Bears");
-		semotus.addRelease("0.1", (new Date('1/1/14')));
-		semotus.addRelease("0.2", (new Date('3/1/14')));
-		semotus.addRole("manager", karen);
-		semotus.addRole("developer", sam);
-		travel.addRole("manager", sam);
-		travel.addRole("developer", sam);
-		travel.addRelease("0.1", (new Date('1/1/14')));
+        // Projects
+        projectSemotus = new Project("Semotus");
+        var projectTravel = new Project("Travel Bears");
+        projectSemotus.addRelease("0.1", (new Date('1/1/14')));
+        projectSemotus.addRelease("0.2", (new Date('3/1/14')));
+        projectSemotus.addRole("manager", karen);
+        projectSemotus.addRole("developer", sam);
+        projectTravel.addRole("manager", sam);
+        projectTravel.addRole("developer", sam);
+        projectTravel.addRelease("0.1", (new Date('1/1/14')));
 
-		// Tickets
-		var ticket1 = semotus.addTicket(sam, "semotus ticket1", "Ticket 1");
-		ticket1.assignRelease("0.1");
-		var ticket2 = semotus.addTicket(sam, "semotus ticket2", "Ticket 2");
-		travel.addTicket(sam, "travel ticket1", "Ticket 1", "0.1");
+        // Tickets
+        securityPrincipal = sam;
+        var ticket1 = projectSemotus.addTicket("semotus ticket1", "Ticket 1");
+        var ticket2 = projectSemotus.addTicket(sam, "semotus ticket2", "Ticket 2");
+        projectTravel.addTicket("travel ticket1", "Ticket 1");
 
+        securityPrincipal = karen
+        var item = ticket1.addComment("ticket1 item1");
+        item.addAttachment("attachment1", "data1");
+        item.addAttachment("attachment2", "data2");
+        ticket1.addApproval();
 
-		var item = ticket1.addComment(karen, "ticket1 item1");
-		item.addAttachment("attachment1", "data1");
-		item.addAttachment("attachment2", "data2");
-		ticket1.addApproval(karen);
+        // Some negative tests
+        var exception = null;
+        securityPrincipal = sam;
+        try { ticket2.addApproval(); } catch (e) {exception = e.toString()}
+        expect (exception).to.equal("only the project manager role can approve a ticket");
 
-		// Some negative tests
-		var exception;
+        // Save stuff and make sure keys are good
 
-		exception = null;
-		try { ticket2.addApproval(sam); } catch (e) {exception = e.toString()}
-		expect (exception).to.equal("only the project manager role can approve a ticket");
+        sam.save().then( function () {
+            expect(sam._id.length).to.equal(24);
+            return karen.persistSave();
+        }.bind(this)).then( function () {
+            expect(karen._id.length).to.equal(24);
+            return projectSemotus.save();
+        }.bind(this)).then(function() {
+            expect(projectSemotus._id.length).to.equal(24);
+            semotus_id = projectSemotus._id;
+            return projectTravel.save();
+        }.bind(this)).then( function (id) {
+            expect(projectTravel._id.length).to.equal(24);
+            done();
+        }.bind(this)).fail(function(e){done(e)});
+    });
 
-		// Persist them (everything hangs off people so the whole graph gets added
+    it("can read stuff back", function (done) {
+        Project.getFromPersistWithId(semotus_id,
+            {creator: {fetch: true},
+             tickets: {fetch: {ticketItems: {fetch: {attachments: true}}}, roles: {fetch: {person: true}}}}).then (function (project)
+        {
+            expect(project.name).to.equal("Semotus");
+            expect(project.roles.length).to.equal(2);
+            project.roles.sort(function(a,b){a.created - b.created});
+            expect(project.roles[0].person.firstName).to.equal("Karen");
+            expect(project.roles[1].person.firstName).to.equal("Sam");
+            expect(project.creator.firstName).to.equal("Sam");
+            project.tickets.sort(function(a,b){a.created - b.created});
+            expect(project.tickets[0].title).to.equal("semotus ticket1");
+            project.tickets[0].ticketItems.sort(function(a,b){a.created - b.created});
+            expect(project.tickets[0].ticketItems[0] instanceof TicketItemComment).to.be.true;
+            expect(project.tickets[0].ticketItems[1] instanceof TicketItemApproval).to.be.true;
+            project.tickets[0].ticketItems[0].attachments.sort(function(a,b){a.created - b.created});
+            expect(project.tickets[0].ticketItems[0].attachments[0].name).to.equal("attachment1");
+            expect(project.tickets[0].ticketItems[0].attachments[1].name).to.equal("attachment2");
+            done();
 
-		var sam_id;
-		var karen_id;
-		var semotus_id;
-		var travel_id;
+        }.bind(this)).fail(function(e) {
+            done(e)
+        });
+    });
 
-		it("can create stuff", function (done) {
-			semotus.persistSave().then(function(id) {
-				semotus_id = id
-				expect(semotus_id.length).to.equal(24);
-				return travel.persistSave();
-			}.bind(this)).then( function (id) {
-				travel_id = id
-				expect(travel_id.length).to.equal(24);
-				return sam.persistSave();
-			}.bind(this)).then( function (id) {
-				sam_id = id
-				expect(sam_id.length).to.equal(24);
-				return karen.persistSave();
-			}.bind(this)).then( function (id) {
-				karen_id = id;
-				expect(karen_id.length).to.equal(24);
-				done();
-			}.bind(this))
-			.fail(function(e){done(e)});
-		});
+    var count = 10;
+    var batchSize = 5;
+    var start = 0;
 
-		it("can read stuff back", function (done) {
-			Project.getFromPersistWithId(semotus_id).then (function (semotus)	{
+    it("can add " + count + " tickets", function (done) {
+        for (var ix = 0; ix < projectSemotus.tickets.length; ++ix)
+            projectSemotus.tickets[ix].remove();
+        for (var ix = 0; ix < count; ++ix)
+            projectSemotus.addTicket("Ticket", ix + 1);
+        projectSemotus.save().then(function(){done()});
+    });
 
-				expect(semotus.name).to.equal("Semotus");
-				expect(semotus.roles.length).to.equal(2);
-				semotus.roles.sort(function(a,b){a.created - b.created});
-				expect(semotus.roles[0].person.firstName).to.equal("Karen");
-				expect(semotus.roles[1].person.firstName).to.equal("Sam");
-				expect(semotus.creator.firstName).to.equal("Sam");
-				semotus.tickets.sort(function(a,b){a.created - b.created});
-				expect(semotus.tickets[0].title).to.equal("semotus ticket1");
-				semotus.tickets[0].ticketItems.sort(function(a,b){a.created - b.created});
-				expect(semotus.tickets[0].ticketItems[0] instanceof TicketItemComment).to.be.true;
-				expect(semotus.tickets[0].ticketItems[1] instanceof TicketItemApproval).to.be.true;
-				semotus.tickets[0].ticketItems[0].attachments.sort(function(a,b){a.created - b.created});
-				expect(semotus.tickets[0].ticketItems[0].attachments[0].name).to.equal("attachment1");
-				expect(semotus.tickets[0].ticketItems[0].attachments[1].name).to.equal("attachment2");
-				done()
-			}.bind(this))
-			.fail(function(e)
-				{done(e)}
-			);
-		});
-	});
+    it ("can read back " + batchSize + " tickets at a time", function (done)
+    {
+        this.timeout(50000);
+        Project.getFromPersistWithId(semotus_id, {tickets: {limit: batchSize}}).then(function(project)
+        {
+            var processTickets = function (project) {
+
+                for (var ix = 0; ix < project.tickets.length; ++ix) {
+                    //console.log(project.tickets[ix].description + " " + (ix + start + 1));
+                    expect(project.tickets[ix].description).to.equal(ix + start + 1);
+                }
+
+                start += batchSize;
+                if (start < count) {
+                    return project.fetch({tickets: {skip: start, limit: batchSize, fetch: {creator: true}}}).then(function (project) {
+                         return processTickets(project);
+                    });
+                } else
+                    done();
+            }
+            return processTickets(project);
+        }).fail(function(e){done(e)});
+    })
+
 });
 
 

@@ -221,7 +221,30 @@ BaseController = objectTemplate.create("controller", {
 		if(this.value == null) return "";
 		return this.addCommas(this.value);
 	},
-	// Utility
+
+    clientInit: function ()
+    {
+        this.attr(".currency", {format: this.formatDollar});
+        this.attr(".spin", {min: "{prop.min}", max: "{prop.max}"});
+        this.rule("text", {maxlength: "{prop.length}", validate: this.isText, format: this.formatText});
+        this.rule("numeric", {parse: this.parseNumber, format: this.formatText});
+        this.rule("name", {maxlength: "{prop.length}", validate: this.isName});
+        this.rule("email", {validate: this.isEmail});
+        this.rule("currency", {format:this.formatDollar, parse: this.parseCurrency});
+        this.rule("currencycents", {format:this.formatCurrencyCents, parse: this.parseCurrency});
+        this.rule("date", {format: this.formatDate, parse: this.parseDate});
+        this.rule("datetime", {format: this.formatDateTime, parse: this.parseDate});
+        this.rule("DOB", {format: this.formatDate, parse: this.parseDOB});
+        this.rule("SSN", {validate: this.isSSN});
+        this.rule("taxid", {validate: this.isTaxID});
+        this.rule("phone", {validate: this.isPhone});
+        this.rule("required", {validate: this.notEmpty});
+        this.rule("percent", {validate: this.isPercent, format: this.formatPercent});
+        this.rule("zip5", {validate: this.isZip5});
+    },
+
+
+    // Utility
 	addCommas: function (nStr)	{
 		nStr += '';
 		x = nStr.split('.');
@@ -285,8 +308,17 @@ BaseController = objectTemplate.create("controller", {
 	fadeOut: function(target, speed) {
 		$(target).fadeOut(speed || 1000);
 	},
+    /**
+     * Client is to expire, either reset or let infrastructure hande it
+     *
+     * @return {Boolean} - true if reset handled within controller, false to destroy/create controller
+     */
+    clientExpire: function () {
+        return false;
+    },
 
-	/**
+
+    /**
 	 * Send an XMLHTTPREQUEST for get or put
 	 * @param url
 	 * @param contentType

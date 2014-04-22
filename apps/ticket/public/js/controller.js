@@ -42,24 +42,6 @@ module.exports.controller = function (objectTemplate, getTemplate)
 		 * -------  Ticket functions ----------------------------------------------------------------
 		 */
 
-        // Setup ticket collection if needed and fetch tickets (allways return an array)
-		getTickets: function ()
-		{
-			if (!this.tickets) {
-				this.tickets = [];       // New empty array
-				this.fetchTickets();     // Page will be re-rendered when this returns
-			}
-			return this.tickets;         // Always returns an array of tickets or empty array
-		},
-
-        // Retrieve tickets
-		fetchTickets: {on: 'server', body: function()
-		{
-			return Ticket.getFromPersistWithQuery({}).then( function (tickets) {
-				this.tickets = tickets;
-			}.bind(this));
-		}},
-
         // Create a new ticket and make it current
         newTicket: function () {
             this.ticket = new Ticket();
@@ -94,68 +76,28 @@ module.exports.controller = function (objectTemplate, getTemplate)
                 }.bind(this));
 		}},
 
-
 		/*
 		 * -------  Project functions ----------------------------------------------------------------
 		 */
 
-		// Client side
-
-		getProjects: function () // setup collection and fetch projects if needed
-		{
-			if (!this.projects) {
-				this.projects = [];     // Now empty array
-				this.userAuthenticatedGetProjects();   // Page will be re-rendered when this returns
-			}
-			return this.projects;
-		},
-
 		newProject: function () { // create a new project to be saved later
-			this.project = new Project(this.person);
+			this.project = new Project("");
 			this.setPage('project');
 		},
 
-		deleteProject: function () {
-			this.userAuthenticatedDeleteProject();
-		},
-
-		saveProject: function ()
-		{
-			this.userAuthenticatedSaveProject().then(function () {
-                this.status = "Project saved at " + this.getDisplayTime();
-                this.error = "";
-            });
-		},
-
-		// Server Side
-
-		userAuthenticatedGetProjects: {on: 'server', body: function()
-		{
-			return Project.getFromPersistWithQuery({}).then( function (projects) {
-					this.projects = projects;
-				}.bind(this)).fail(function (err) {
-					this.log(0, "Error fetching projects " + err.toString() + err.stack ? err.stack : "");
-				}.bind(this))
-		}},
-
-		userAuthenticatedSaveProject: {on: "server", body: function ()
+	    saveProject: {on: "server", body: function ()
 		{
 			if (this.project)
 				return this.project.save(this.person).then(function(project)
 				{
-					// Update with newly saved one or add to list
-					var ix = _.indexOf(this.projects, this.project)
-					if (ix >= 0)
-						this.projects.splice(ix, 1, project);
-					else
+					if (_.indexOf(this.projects, this.project) < 0)
 						this.projects.splice(0, 0, project);
-					
-					this.project = project;
-					
+                    this.status = "Project saved at " + this.getDisplayTime();
+                    this.error = "";
 				}.bind(this));
 		}},
 
-		userAuthenticatedDeleteProject: {on: "server", body: function ()
+		deleteProject: {on: "server", body: function ()
 		{
 			if (this.project)
 				return this.project.remove().then(function () {
@@ -167,51 +109,16 @@ module.exports.controller = function (objectTemplate, getTemplate)
 				}.bind(this));
 		}},
 
-		/*
-		 * -------  Person functions ----------------------------------------------------------------
-		 */
-
-		getPeople: function ()
-		{
-			if (!this.people) {
-				this.people = [];     // Now empty array
-				this.userAuthenticatedGetPeople();   // Page will be re-rendered when this returns
-			}
-			return this.people;
-		},
-		userAuthenticatedGetPeople: {on: 'server', body: function()
-		{
-			return Person.getFromPersistWithQuery({}).then( function (people) {
-					this.people = people;
-				}.bind(this)).fail(function (err) {
-					this.log(0, "Error fetching people " + err.toString() + err.stack ? err.stack : "");
-				}.bind(this))
-		}},
 
 /*
 * -------  Housekeeping ----------------------------------------------------------------------
 */
 		clientInit: function ()
 		{
-            this.attr(".currency", {format: this.formatDollar});
-            this.attr(".spin", {min: "{prop.min}", max: "{prop.max}"});
-            this.rule("text", {maxlength: "{prop.length}", validate: this.isText, format: this.formatText});
-            this.rule("numeric", {parse: this.parseNumber, format: this.formatText});
-            this.rule("name", {maxlength: "{prop.length}", validate: this.isName});
-            this.rule("email", {validate: this.isEmail});
-            this.rule("currency", {format:this.formatDollar, parse: this.parseCurrency});
-            this.rule("currencycents", {format:this.formatCurrencyCents, parse: this.parseCurrency});
-            this.rule("date", {format: this.formatDate, parse: this.parseDate});
-            this.rule("datetime", {format: this.formatDateTime, parse: this.parseDate});
-            this.rule("DOB", {format: this.formatDate, parse: this.parseDOB});
-            this.rule("SSN", {validate: this.isSSN});
-            this.rule("taxid", {validate: this.isTaxID});
-            this.rule("phone", {validate: this.isPhone});
-            this.rule("required", {validate: this.notEmpty});
-            this.rule("percent", {validate: this.isPercent, format: this.formatPercent});
-            this.rule("zip5", {validate: this.isZip5});
+            BaseController.prototype.clientInit.call(this);
             this.changePasswordCheck();
             this.setPage(this.page);
+
         },
 
         /**
@@ -227,23 +134,6 @@ module.exports.controller = function (objectTemplate, getTemplate)
             return this.securityContext ? true : false;
         },
 
-
-        /**
-         * Called when the controller is created on the server
-         *
-         */
-        serverInit: function () {
-        },
-
-        /**
-         * Client is to expire, either reset or let infrastructure hande it
-         *
-         * @return {Boolean} - true if reset handled within controller, false to destroy/create controller
-         */
-        clientExpire: function () {
-            return false;
-        },
-
         /**
          * Called when controller destroyed so we can delete any resources (e.g. timers)
          */
@@ -257,12 +147,6 @@ module.exports.controller = function (objectTemplate, getTemplate)
             this.error = error;
         },
 
-        /**
-         * Called before any pass to render the UI
-         */
-		preRenderInitialize: function()
-        {
-		},
 
         /**
          * Set the current page

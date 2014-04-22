@@ -405,7 +405,7 @@ Bindster.prototype.render = function (node, context, parent_fingerprint, wrapped
                 if (tags.iterateon && !iterating_entity && !skip)
                 {
                     do_render = false;
-                    var fill_data = this.get(tags.iterateon);
+                    var fill_data = this.get(this.getPropOrGetter(tags.iterateon));
                     var nothing_rendered = true;
                     var previousNode;
                     // Render nodes adding more through cloning if needed
@@ -508,7 +508,7 @@ Bindster.prototype.render = function (node, context, parent_fingerprint, wrapped
                             // Process various tags
                             if (tags.fill)
                             {
-                                var fill_data = this.eval(tags.fill, null, "using", node);
+                                var fill_data = this.eval(this.getPropOrGetter(tags.fill), null, "fill", node);
                                 var fill_using = this.eval(tags.using, null, "using", node);
                                 if (!fill_data)
                                     this.throwError(node, 'fill', 'cannot get data to fill' + tags.fill);
@@ -583,7 +583,7 @@ Bindster.prototype.render = function (node, context, parent_fingerprint, wrapped
                                 }
                                 processed_tags = true;
                             }
-                            var bind_data = this.eval(tags.bind, null, "bind", node);
+                            var bind_data = this.eval(this.getPropOrGetter(tags.bind), null, "bind", node);
                             if (typeof(bind_data) == 'undefined')
                                 this.throwError(node, 'bind', tags.bind + ' returned undefined', node);
                             if (tags.format)
@@ -797,7 +797,12 @@ Bindster.prototype.resolveSelectValue = function (target)
 
         return target.value;
 }
-
+Bindster.prototype.getPropOrGetter = function (bind_ref) {
+    if (bind_ref.match(/[A-Za-z0-9_]$/))
+        return "(typeof(" + bind_ref + "Get) == 'function' ? " + bind_ref + "Get() : " + bind_ref + ")";
+    else
+        return bind_ref
+}
 Bindster.prototype.setAttr = function (selector, attr, value)
 {
     var str = "";

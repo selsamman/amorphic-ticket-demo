@@ -8,8 +8,8 @@ module.exports.ticket = function (objectTemplate, getTemplate)
 	{
 		title:              {type: String, rule: ["required"]},
         titleSet:           {on: "server", body: function(value) {
-            if (value.match(/shit|piss|fuck|cocksucker|motherfucker|tits/))
-                throw "No foul language as per George Carlin";
+            if (value.match(/Sam/) && value.match(/sucks|poor|untidy|buggy|crap/))
+                throw "Don't disparage Sam";
             this.title = value;
         }},
 		description:        {type: String},
@@ -52,6 +52,10 @@ module.exports.ticket = function (objectTemplate, getTemplate)
 			for (var ix = 0; ix < this.ticketItems; ++ix)
 				this.ticketItems[ix].remove();
 			return this.persistDelete();
+            if (this.project)
+                for (var ix = 0; ix < this.project.tickets.length; ++ix)
+                    if (this.project.tickets[ix] == this)
+                        this.project.splice(ix,1)
 		}},
 
 		save: function ()
@@ -138,18 +142,16 @@ module.exports.ticket = function (objectTemplate, getTemplate)
 
 	Ticket.mixin(
 	{
-		ticketItems:        {toServer: false, type: Array, of: TicketItem, value: [], fetch: true},
+		ticketItems:        {toServer: false, type: Array, of: TicketItem, value: []},
 
         addComment: {on: "server", body: function (comment) {
-            if (!this.created)
-                throw "create ticket first";
-            this.ticketItems.push(new TicketItemComment(this, this.getSecurityContext().person, comment));
+            var comment = new TicketItemComment(this, this.getSecurityContext().principal, comment);
+            this.ticketItems.push(comment);
+            return comment;
         }},
 
 		addApproval:  {on: "server", body: function () {
-            if (!this.created)
-                throw "create ticket first";
-            var person = this.getSecurityContext().person();
+            var person = this.getSecurityContext().principal;
 			if (!this.project)
 				throw "cannot approve ticket that is not assigned to a project";
 			if (!this.project.getRole( "manager", person))

@@ -16,13 +16,13 @@
         <b:memofield b:bind="project.description" id="title" lcols="2" fcols="10" text="Description" label="Description"></b:memofield>
     </div>
 
-    <div class="form-group">
+    <div class="form-group" b:showif="project.creator">
         <b:staticfield b:bind="project.created" id="created" lcols="2" fcols="4" label="Created"></b:staticfield>
         <b:staticfield b:bind="project.creator.getFullName()" id="name" lcols="2" fcols="4" label="By"></b:staticfield>
     </div>
 
     <div class="form-group">
-        <b:objectselectfield b:bind="project.owner" id="project" lcols="2" fcols="4" label="Owner" values="getPeople()" text="getFullName()" empty="none"></b:objectselectfield>
+        <b:objectselectfield b:bind="project.owner" id="project" lcols="2" fcols="4" label="Owner" values="people" text="getFullName()" empty="none"></b:objectselectfield>
     </div>
 
 </form>

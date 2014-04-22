@@ -35,17 +35,17 @@ module.exports.project = function (objectTemplate, getTemplate)
 		name:               {type: String, value: "", length: 40, rule: ["name", "required"]},
 		description:        {type: String, value: ""},
 		created:            {type: Date, rule: ["datetime"]},
-		creator:            {type: Person, fetch: true},
-		owner:              {type: Person, fetch: true},
-		roles:              {type: Array, of: ProjectRole, value: [], fetch: true},
-		releases:           {type: Array, of: ProjectRelease, value: [], fetch: true},
+		creator:            {toServer: false, type: Person, fetch: true},
+		owner:              {type: Person, fetch: true},  // Needs server pattern like ticket
+		roles:              {toServer: false, type: Array, of: ProjectRole, value: [], fetch: true},
+		releases:           {toServer: false, type: Array, of: ProjectRelease, value: [], fetch: true},
 
 		init: function (name) {
 			this.name = name || null;
 		},
 
         validateServerCall: function () {
-            return this.getSecurityContext().person ? true : false;
+            return this.getSecurityContext().principal ? true : false;
         },
 
         getRole: function (role, person) {
@@ -93,23 +93,11 @@ module.exports.project = function (objectTemplate, getTemplate)
 
 		save: function (authenticatedPerson)
 		{
-			// Assume we are tainted, make sure everything exists at this point in time
-			return 	(Project.getFromPersistWithId(this._id)).then( function(project)
-			{
-				return Person.getFromPersistWithId(this.owner ? this.owner._id : null).then(function(person)
-				{
-					if (!project)  // Handle new case
-						project = new Project(authenticatedPerson);
-
-					project.name = this.name;
-					project.description = this.description;
-					project.owner = person;
-					return project.persistSave();
-
-				}.bind(this));
-			}.bind(this));
-		},
-		remove: function () {
+            this.creator = this.getSecurityContext().principal;
+            this.created = new Date();
+			return this.persistSave();
+        },
+        remove: function () {
 			return this.persistDelete();
 		}
 	});
@@ -133,11 +121,10 @@ module.exports.project_mixins = function (root, requires)
 	requires.project.Project.mixin(
 	{
 		tickets:        {type: Array, of: Ticket, value: []},
-		addTicket: function (person, title, text, release) {
-			var ticket = new Ticket(person, this, title, text);
-			if (release)
-				ticket.assignRelease(release);
-			this.tickets.push(ticket);
+		addTicket: function (title, text) {
+			var ticket = new Ticket(title, text);
+            ticket.project = this;
+            this.tickets.push(ticket);
 			return ticket;
 		}
 	});

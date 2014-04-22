@@ -7,7 +7,7 @@
 </div>
 
 <div class="container">
-    <table class="table" b:showif="getProjects().length > 0">
+    <table class="table">
         <thead>
             <tr>
                 <th>Name</th>
@@ -17,7 +17,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr b:iterateon="getProjects()" b:iteratewith="row">
+            <tr b:iterateon="projects" b:iteratewith="row">
                 <td><a href="#" b:onclick="project=row;setPage('project')" b:bind="row.name || 'unnamed'"></a></td>
                 <td b:bind="row.created"></td>
                 <td b:bind="row.creator.getFullName()"></td>
