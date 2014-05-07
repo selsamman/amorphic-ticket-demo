@@ -42,7 +42,14 @@
         <input b:bind="__bind__" type="text" class="form-control" id="__id__" b:placeholder="__text__" b:trigger="if(typeof(__bind__Trigger) == 'function'){__bind__Trigger()}" b:when="__when__" b:onchange="__whenchanged__" b:focus="__focus__" b:onenter="__onenter__" />
         <span style="color:red" b:showif="isError('__bind__')"><br/><span b:binderror="__bind__"></span></span>
     </div>
+</b:mapper>
 
+<b:mapper tag="passwordfield">
+    <label for="__id__" class="col-md-__lcols__ control-label" b:bind="'__label__'"></label>
+    <div class="col-md-__fcols__">
+        <input b:bind="__bind__" type="password" class="form-control" id="__id__" b:placeholder="__text__" b:trigger="if(typeof(__bind__Trigger) == 'function'){__bind__Trigger()}" b:when="__when__" b:onchange="__whenchanged__" b:onenter="__onenter__"/>
+        <span style="color:red" b:showif="isError('__bind__')"><br/><span b:binderror="__bind__"></span></span>
+    </div>
 </b:mapper>
 
 <b:mapper tag="memofield">
@@ -66,13 +73,6 @@
             <p b:bind="__bind__" style="color: red" type="text" class="form-control-static" id="__id__" ></p>
         </div>
     </b:if>
-</b:mapper>
-
-<b:mapper tag="passwordfield">
-    <label for="__id__" class="col-md-__lcols__ control-label" b:bind="'__label__'"></label>
-    <div class="col-md-__fcols__">
-        <input b:bind="__bind__" type="password" class="form-control" id="__id__" b:placeholder="__text__" b:trigger="if(typeof(__bind__Trigger) == 'function'){__bind__Trigger()}" b:when="__when__" b:onchange="__whenchanged__" b:onenter="__onenter__"/>
-    </div>
 </b:mapper>
 
 <b:mapper tag="objectselectfield">

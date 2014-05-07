@@ -34,23 +34,23 @@
 
 <body style="visibility:hidden;">
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <ul class="nav navbar-nav">
+    <ul class="nav navbar-nav" b:showif="!loggedIn">
         <li b:class="page=='home' ? 'active' : ''}"><a href="#home">Home</a></li>
-        <li b:class="page=='login' ? 'active' : ''}" b:showif="!loggedIn"><a href="#login">Login</a></li>
+        <li b:class="page=='login' ? 'active' : ''}"><a href="#login">Login</a></li>
         <li b:class="page=='register'' ? 'active' : ''}"><a href="#register">Register</a></li>
         <li b:showif="loggedIn"><a href="#" b:onclick="logout()">Logout</a></li>
     </ul>
     <ul class="nav navbar-nav" b:showif="loggedIn">
+        <li b:class="page=='home' ? 'active' : ''}"><a href="#home">Home</a></li>
         <li b:class="page=='tickets' ? 'active' : ''}"><a href="#" b:onclick="setPage('tickets')">Tickets</a></li>
         <li b:class="page=='project' ? 'active' : ''}"><a href="#" b:onclick="setPage('projects')">Projects</a></li>
         <li b:class="page=='people' ? 'active' : ''}"><a href="#" b:onclick="setPage('people')">People</a></li>
         <li class="dropdown">
-            Hello <span b:bind="person.firstName"></span>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Hello <span b:bind="person.firstName"></span><b class="caret"></b></a>
             <ul class="dropdown-menu">
-                <li class="socials"><g:plusone annotation="inline" width="150"></g:plusone></li>
-                <li class="socials"><div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-width="The pixel width of the plugin" data-height="The pixel height of the plugin" data-colorscheme="light" data-layout="standard" data-action="like" data-show-faces="true" data-send="false"></div></li>
-                <li class="socials"><a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
-                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></li>
+                <li><a href="#" b:onclick="logout()">Logout</a></li>
+                <li><a href="#" b:onclick="setPage('change_email')">Change email</a></li>
+                <li><a href="#" b:onclick="setPage('change_password')">Change Password</a></li>
             </ul>
         </li>
     </ul>
@@ -63,27 +63,64 @@
 
     <a name="home" b:onarrival="setPage('home')"></a>
     <a name="" b:onarrival="setPage('home')"></a>
+
     <b:if test="page == 'home'">
         <div b:showif="loggedIn" class="page-header">
             <h1>Hey <span b:bind="person.firstName"></span></h1>
             <p>Welcome to the Semotus Ticket Demo</p>
-            <p>Semotus is an open source project on <a href="https://github.com/selsamman/semotus" target="_blank">github</a></p>
         </div>
         <div b:showif="!loggedIn" class="page-header">
             <h1>Welcome to the Semotus Ticket Demo</h1>
             <p>Semotus is an open source project on <a href="https://github.com/selsamman/semotus" target="_blank">github</a></p>
         </div>
+        <div style="text-align: center;color: red;margin-top: 20px" b:bind="error"></div>
     </b:if>
 
     <a name="login" b:onarrival="setPage('login')"></a>
 
     <b:if test="page == 'login'">
-        <b:include url="modules/semotus-userman/login.html"></b:include>
+        <b:include url="modules/semotus-userman/pages/login.html"></b:include>
     </b:if>
 
     <a name="register" b:onarrival="setPage('register')"></a>
     <b:if test="page == 'register'">
-        <b:include url="modules/semotus-userman/register.html"></b:include>
+        <b:include url="modules/semotus-userman/pages/registration.html"></b:include>
+    </b:if>
+    <a name="verify_email" b:onarrival="verify_email"></a>
+    <b:if test="page == 'registration_confirmation'">
+        <b:include url="modules/semotus-userman/pages/registration_confirmation.html"></b:include>
+    </b:if>
+
+    <a name="change_email" b:onarrival="setPage('change_email')"></a>
+    <b:if test="page == 'change_email'">
+        <b:include url="modules/semotus-userman/pages/change_email.html"></b:include>
+    </b:if>
+    <b:if test="page == 'change_email_confirmation'">
+        <b:include url="modules/semotus-userman/pages/change_email_confirmation.html"></b:include>
+    </b:if>
+
+    <a name="change_password" b:onarrival="setPage('change_password')"></a>
+    <b:if test="page == 'change_password'">
+        <b:include url="modules/semotus-userman/pages/change_password.html"></b:include>
+    </b:if>
+    <b:if test="page == 'change_password_confirmation'">
+        <b:include url="modules/semotus-userman/pages/change_password_confirmation.html"></b:include>
+    </b:if>
+
+    <a name="reset_password_request" b:onarrival="setPage('reset_password_request')"></a>
+    <b:if test="page == 'reset_password_request'">
+        <b:include url="modules/semotus-userman/pages/reset_password_request.html"></b:include>
+    </b:if>
+    <b:if test="page == 'reset_password_instructions'">
+        <b:include url="modules/semotus-userman/pages/reset_password_instructions.html"></b:include>
+    </b:if>
+
+    <a name="reset_password_token" b:onarrival="resetPassword()"></a>
+    <b:if test="page == 'reset_password'">
+        <b:include url="modules/semotus-userman/pages/reset_password.html"></b:include>
+    </b:if>
+    <b:if test="page == 'reset_password_confirmation'">
+        <b:include url="modules/semotus-userman/pages/change_password_confirmation.html"></b:include>
     </b:if>
 
     <a name="people" b:onarrival="setPage('people')"></a>

@@ -4,11 +4,17 @@
 	"dbTestName":   "ticket_test",
     "createControllerFor": "#",
 	"ver":          "0",
-    "mixins":      {
+    "modules":      {
         "userman":  {
             "require": "semotus-userman",
             "controller": {"require": "controller", "template": "Controller"},
             "principal": {"require" : "person", "template": "Person"}
+        },
+        "mandrill": {
+            "require" : "semotus-mandrill",
+            "controller": {"require": "controller", "template": "Controller"},
+            "senderEmail" : "sams@elsamman.com",
+            "senderName": "Amorphic Team"
         }
     }
 }

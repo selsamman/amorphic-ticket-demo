@@ -111,6 +111,8 @@ Bindster.prototype.setController = function(controller) {
         // A re-render can end up calling validate again
         if (!this.bindster.validate) {
             this.bindster.validate = true;
+            this.validateMode
+
             this.bindster.render();
         }
         return !this.hasErrors();
@@ -122,7 +124,10 @@ Bindster.prototype.setController = function(controller) {
             objRef = this.data;
         }
         this.bindster.setError(objRef, propRef, error);
-    }
+    },
+        controller.getErrorMessage = function(message) {
+            return this.bindster.getBindErrorData(null, message);
+        }
     controller.clearError = function (objRef, propRef) {
         this.bindster.clearError(objRef, propRef);
     }
@@ -792,14 +797,14 @@ Bindster.prototype.resolveSelectValue = function (target)
         else if (target.bindster.tags.proptype && target.bindster.tags.proptype == Boolean)
 
             return target.value.match(/1|true|yes|on/) ? true : false;
-
-    } else
-
-        return target.value;
+    }
+    return target.value;
 }
 Bindster.prototype.getPropOrGetter = function (bind_ref) {
-    if (bind_ref.match(/[A-Za-z0-9_]$/))
-        return "(typeof(" + bind_ref + "Get) == 'function' ? " + bind_ref + "Get() : " + bind_ref + ")";
+    /* It would be nice to be able to substitute a getter but this would require some heavy duty processing
+    *  this feature should probably come out or be done as a true getter */
+    if (bind_ref.match(/[A-Za-z0-9_]$/) && !bind_ref.match(/[^A-Za-z0-9_\(\)\.\[\]]/))
+        return "(typeof(" + bind_ref + "Get) == 'function' ? (" + bind_ref + "Get()) : (" + bind_ref + "))";
     else
         return bind_ref
 }
@@ -886,15 +891,15 @@ Bindster.prototype.getBindErrorData = function(node, bind_data, xtra_bind_data)
         xtra_bind_data = typeof(xtra_bind_data) == "object" ? xtra_bind_data : this.eval("bindster_temp=" + xtra_bind_data, null, "binderrordata", node);
         for (var prop in xtra_bind_data) {temp_bind_data[prop] = xtra_bind_data[prop]}
     }
-    if (temp_bind_data.message) {
-        if (this.messages[bind_data.message]) {
+    if (temp_bind_data.message || temp_bind_data.code) {
+        if (this.messages[bind_data.code || bind_data.message]) {
             expression = this.messages[bind_data.message].replace(/{(.*?)}/g, function (all, js) {
                 js = "(" + js + ")";
                 return '" + ' + js + ' + "';
             });
             bind_data = this.eval('"' + expression + '"', temp_bind_data, "binderror", node);
         } else
-            bind_data = bind_data.message;
+            bind_data = bind_data.text || bind_data.message;
         //throw this.throwError(node, 'binderror', "Missing message declaration for " + bind_data.message);
     } else
         throw this.throwError(node, 'binderror', bind_data);
@@ -945,15 +950,15 @@ Bindster.prototype.getBindAction = function(tags, value)
         (tags.validate ? (tags.validate + "; ") : "") +
         this_previous_value + " = " + tags.bind  + ";" +
         "if (" + bind_error +") {delete " + bind_error + "} " +
-        ((typeof(Q) != 'undefined' && tags.bind.match(/[a-zA-z]$/)) ?
+        ((typeof(Q) != 'undefined' && tags.bind.match(/[a-zA-z]$/ && !tags.bind.match(/[^A-Za-z0-9_\(\)\.\[\]]/))) ?
             "if (typeof(" + tags.bind + "Set) == 'function'){" +
                 bind_error + " = '__pending__';var self=this;" + tags.bind + "Set(" + this_value + ").then(" + "" +
                 "function() {(function(){if(" + bind_error + "){delete " + bind_error + "};" +
-                    (tags.trigger ? tags.trigger : "") + "}).call(self)}," +
+                (tags.trigger ? tags.trigger : "") + "}).call(self)}," +
                 "function(e){(function(){c.bindster.hasErrors = true;" + bind_error + " = e}).call(self)})" +
-            "}else{" +
+                "}else{" +
                 tags.bind + " = " + this_value + "};"
-         : (tags.bind + " = " + this_value + ";") + (tags.trigger ? (tags.trigger + "; ") : "")) +
+            : (tags.bind + " = " + this_value + ";") + (tags.trigger ? (tags.trigger + "; ") : "")) +
         ((this.controller && typeof(this.controller.onchange) == "function") ? "this.controller.onchange();" : "") +
         " } catch (e) {if(!e.constructor.toString().match(/Error/)){c.bindster.hasErrors = true;" +
         bind_error + " = e} else {c.bindster.displayError(null, e, 'validation, parse or format', node)}; " +

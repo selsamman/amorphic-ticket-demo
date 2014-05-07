@@ -40,13 +40,15 @@ for (var app in appList)
 {
 	var path = appList[app];
 	var config = JSON.parse(fs.readFileSync(path + "/config.json").toString());
+    config.nconf = nconf; // global config
 	var schema = JSON.parse(fs.readFileSync(path + "/schema.json").toString());
 
 	var dbName = nconf.get(app + '_dbName') || config.dbName;
 	var dbPath = nconf.get(app + '_dbPath') || config.dbPath;
 
 	promises.push(
-		Q.ninvoke(MongoClient, "connect", dbPath + dbName).then (function (db) {
+		Q.ninvoke(MongoClient, "connect", dbPath + dbName).then (function (db)
+        {
 			console.log("DB connection established to " + dbName);
 			function injectObjectTemplate (objectTemplate) {
 				objectTemplate.setDB(db);

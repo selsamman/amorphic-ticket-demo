@@ -12,6 +12,7 @@ nconf.file('local', 'config_secure.json');
 
 var foo=require("../apps/ticket/public/js/ticket.js");
 
+
 var requires = Semotus.getTemplates(PersistObjectTemplate, 'apps/ticket/public/js/',
 	['ticket.js','person.js','person.js','project.js']);
 
@@ -21,6 +22,7 @@ var TicketItemAttachment =  requires.ticket.TicketItemAttachment;
 var TicketItemComment =  requires.ticket.TicketItemComment;
 var TicketItemApproval =  requires.ticket.TicketItemApproval;
 
+var projectSemotus;
 var Person = requires.person.Person;
 var Project = requires.project.Project;
 var ProjectRelease = requires.project.ProjectRelease;
