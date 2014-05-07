@@ -14,7 +14,8 @@
         "nconf": "0.6.x",
         "connect": "2.6.x",
         "semotus": "0.0.x",
-        "semotus-userman": "0.0.x"
+        "semotus-userman": "0.0.x",
+        "formidable" : "1.x"
     },
     "bundledDependencies": [
         "semotus",
