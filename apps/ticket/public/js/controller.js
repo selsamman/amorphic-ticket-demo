@@ -1,6 +1,6 @@
 module.exports.controller = function (objectTemplate, getTemplate)
 {
-    // Application Modules
+    // Include model
 	var BaseController = getTemplate('./baseController.js').BaseController;
 	var Person = getTemplate('./person.js').Person;
 	var Project = getTemplate('./project.js').Project;
@@ -8,38 +8,35 @@ module.exports.controller = function (objectTemplate, getTemplate)
 
     // Non-Semotus modules
 	if (typeof(require) != "undefined") {
-		Q = require('q');  // Don't use var or js optimization will force local scope
+		Q = require('q');  // Don't use var or js - optimization will force local scope
 		_ = require('./lib/underscore');
 	}
 
+    // Main controller (any other controllers should be embedded as properties)
     Controller = BaseController.extend(
 	{
-		page:			{type: String, value: ''},
-		error:          {type: String},
-		status:         {type: String},
-        comment:        {type: String},
+        // Global properties
+		page:			{type: String, value: ''},          // The current page (hash name)
+		error:          {type: String},                     // Non-field specific error condition
+		status:         {type: String},                     // Information status (e.g. saved at at ...)
 
 		// References to the model
 
 		ticket:         {type: Ticket},
-		tickets:        {toServer: false, type: Array, of: Ticket},
+		tickets:        {type: Array, of: Ticket},
 
 		person:         {type: Person},
-		people:         {toServer: false, type: Array, of: Person},
-
+		people:         {type: Array, of: Person},
 
 		project:        {type: Project},
-		projects:       {toServer: false, type: Array, of: Project},
+		projects:       {type: Array, of: Project},
 
-        /**
-         * Called on object creation
+        // Temporary fields
+        comment:        {type: String},                     // When adding a comment to a ticket
+
+        /*
+         * -------  Ticket functions ----------------------------------------------------------------
          */
-		init: function () {
-		},
-
-		/*
-		 * -------  Ticket functions ----------------------------------------------------------------
-		 */
 
         // Create a new ticket and make it current
         newTicket: function ()
@@ -183,19 +180,6 @@ module.exports.controller = function (objectTemplate, getTemplate)
         },
 
         /**
-         * Security check on remote calls
-         *
-         * @param functionName
-         * @returns {Boolean} - whether to proceed with call
-         */
-        validateServerCall: function (functionName) // called by semotus prior to anyfunction call
-        {
-            if (functionName.match(/^public/))
-                return true;
-            return this.securityContext ? true : false;
-        },
-
-        /**
          * Called if an error thrown on server call that is not handled
          */
         handleRemoteError: function (error) {
@@ -235,7 +219,6 @@ module.exports.controller = function (objectTemplate, getTemplate)
             return this.page == name;
         },
 
-
         log: function (level, text) {
             (this.__template__.objectTemplate || RemoteObjectTemplate).log(level, text);
         },
@@ -244,9 +227,23 @@ module.exports.controller = function (objectTemplate, getTemplate)
             var date = new Date();
             return (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear() + " " +
                 date.toTimeString().replace(/ .*/, '');
+        },
+
+        /**
+         * Security check on remote calls
+         *
+         * @param functionName
+         * @returns {Boolean} - whether to proceed with call
+         */
+        validateServerCall: function (functionName) // called by semotus prior to anyfunction call
+        {
+            if (functionName.match(/^public/))
+                return true;
+            return this.securityContext ? true : false;
         }
 
-	});
+
+    });
 
     return {Controller: Controller};
 }

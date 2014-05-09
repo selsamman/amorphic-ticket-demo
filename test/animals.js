@@ -2,6 +2,8 @@ var expect = require('chai').expect;
 var Q = require("q");
 var ObjectTemplate = require('semotus/objectTemplate.js');
 
+var fuck = "you";
+
 /* Teacher Student Example */
 
 Animal = ObjectTemplate.create("Animal",
@@ -42,7 +44,6 @@ Animal.mixin(
 {
 	ark:    {type: Ark}
 });
-
 
 describe("Freeze Dried Arks", function () {
 
@@ -98,6 +99,7 @@ describe("Freeze Dried Arks", function () {
 	});
 
 });
+
 
 
 

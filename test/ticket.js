@@ -12,7 +12,6 @@ nconf.file('local', 'config_secure.json');
 
 var foo=require("../apps/ticket/public/js/ticket.js");
 
-
 var requires = Semotus.getTemplates(PersistObjectTemplate, 'apps/ticket/public/js/',
 	['ticket.js','person.js','person.js','project.js']);
 
@@ -49,15 +48,6 @@ ObjectTemplate.globalInject(function (obj) {
     }
 });
 
-before (function (done) {
-	Q.ninvoke(MongoClient, "connect", nconf.get('dbPath') + nconf.get('dbTestName')).then (function (dbopen) {
-		db = dbopen;
-		PersistObjectTemplate.setDB(db);
-		PersistObjectTemplate.setSchema(collections);
-		done();
-	});
-});
-
 // Utility function to clear a collection via mongo native
 function clearCollection(collectionName) {
 	return Q.ninvoke(db, "collection", collectionName).then(function (collection) {
@@ -69,6 +59,15 @@ function clearCollection(collectionName) {
 
 describe("Ticket System Test Suite", function () {
 
+    it ("opens the database", function (done) {
+        console.log("starting ticket test");
+        Q.ninvoke(MongoClient, "connect", nconf.get('dbPath') + nconf.get('dbTestName')).then(function (dbopen) {
+            db = dbopen;
+            PersistObjectTemplate.setDB(db);
+            PersistObjectTemplate.setSchema(collections);
+            done();
+        });
+    });
     // Variables global to test
     var semotus_id;
     var semotusProject;
@@ -191,7 +190,7 @@ describe("Ticket System Test Suite", function () {
 
                 for (var ix = 0; ix < project.tickets.length; ++ix) {
                     //console.log(project.tickets[ix].description + " " + (ix + start + 1));
-                    expect(project.tickets[ix].description).to.equal(ix + start + 1);
+                    expect(ix + start + 1).to.equal(project.tickets[ix].description);
                 }
 
                 start += batchSize;
@@ -206,6 +205,12 @@ describe("Ticket System Test Suite", function () {
         }).fail(function(e){done(e)});
     })
 
+    it ("closes the database", function (done) {
+        db.close(function () {
+            console.log("ending ticket test");
+            done()
+        });
+    });
 });
 
 
