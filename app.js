@@ -7,7 +7,7 @@ var MongoClient = require('mongodb').MongoClient;
 var connect = require('connect');
 var http = require('http');
 var https = require('https');
-var semotus = require('semotus');
+var amorphic = require('amorphic');
 
 // Configuraiton file
 var nconf = require('nconf');
@@ -21,7 +21,7 @@ var objectCacheExpiration = nconf.get('objectCacheSeconds') * 1000;
 var dbname = nconf.get('dbname');
 
 // We use memory store because the only leak condition is that sessions don't expire unless referenced.
-// and the controller caching mechanism in semotus references the session to expire it's own cache
+// and the controller caching mechanism in amorphic references the session to expire it's own cache
 // which takes care of session garbage collection.  Clearly a session store based on something like
 // redis is more desirable
 var MemoryStore = connect.session.MemoryStore;
@@ -57,7 +57,7 @@ for (var app in appList)
 				objectTemplate.logLevel = nconf.get('logLevel') || 1;
 			}
 
-			semotus.establishApplication(app, path + '/public/js/controller.js', injectObjectTemplate,
+            amorphic.establishApplication(app, path + '/public/js/controller.js', injectObjectTemplate,
 				sessionExpiration, objectCacheExpiration, memoryStore, null, config.ver, config);
 
 			return Q.fcall(function(){return true});
@@ -78,27 +78,30 @@ Q.all(promises).then( function ()
 
     app
     .use('/modules/', connect.static(__dirname + "/node_modules"))
+    .use('/bindster/', connect.static(__dirname + "/node_modules/bindster"))
+    .use('/amorphic/', connect.static(__dirname + "/node_modules/amorphic"))
+    .use('/supertype/', connect.static(__dirname + "/node_modules/supertype"))
     .use('/semotus/', connect.static(__dirname + "/node_modules/semotus"))
     .use(connect.cookieParser())
 	.use(connect.bodyParser())
 	.use(sessionRouter)
-	.use('/semotus/init/' , function (request, response) {
+	.use('/amorphic/init/' , function (request, response) {
 		  console.log ("Requesting " + request.originalUrl);
 		  if(request.originalUrl.match(/([A-Za-z0-9_]*)\.js/)) {
 			  var appName = RegExp.$1;
 			  console.log("Establishing " + appName);
-			  semotus.establishServerSession(request, appName, "initial")
+              amorphic.establishServerSession(request, appName, "initial")
 			  .then (function (session) {
 				  response.setHeader("Content-Type", "application/javascript");
 				  response.setHeader("Cache-Control", "public, max-age=0");
 				  response.end(
-                      "semotus.setConfig(" + session.getServerConfigString() +");" +
-                      "semotus.setInitialMessage(" + session.getServerConnectString() +");"
+                      "amorphic.setConfig(" + session.getServerConfigString() +");" +
+                      "amorphic.setInitialMessage(" + session.getServerConnectString() +");"
                   );
 			  }).done();
 		  }
 	 })
-	.use(semotus.router);
+	.use(amorphic.router);
 
 
 	app.listen(nconf.get('port'));

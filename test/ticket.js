@@ -1,18 +1,18 @@
 var expect = require('chai').expect;
 var Q = require("q");
 var fs = require('fs');
-var ObjectTemplate = require('semotus/objectTemplate.js');
-var PersistObjectTemplate = require('semotus/persistObjectTemplate.js')(ObjectTemplate, null, ObjectTemplate);
+var ObjectTemplate = require('supertype');
+var PersistObjectTemplate = require('persistor')(ObjectTemplate, null, ObjectTemplate);
 var MongoClient = require('mongodb').MongoClient;
 var nconf = require('nconf');
-var Semotus = require('semotus');
+var amorphic = require('amorphic');
 nconf.argv().env();
 nconf.file('checkedin', 'config.json');
 nconf.file('local', 'config_secure.json');
 
 var foo=require("../apps/ticket/public/js/ticket.js");
 
-var requires = Semotus.getTemplates(PersistObjectTemplate, 'apps/ticket/public/js/',
+var requires = amorphic.getTemplates(PersistObjectTemplate, 'apps/ticket/public/js/',
 	['ticket.js','person.js','person.js','project.js']);
 
 var Ticket = requires.ticket.Ticket;

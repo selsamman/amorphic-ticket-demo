@@ -1,223 +1,105 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:b="http://bindster.com" xmlns:fb="http://ogp.me/ns/fb#" xml:lang="en" lang="en">
+
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="description" content="Semotus sample application">
-<meta name="keywords" content="semotus bindster nodejs mongodb">
-<meta name="title" content="Semotus sample application">
 
-<script src="modules/q/q.js?ver=0q.js?ver=0"></script>
-<script src="js/lib/underscore.js?ver=0"></script>
-<script src="js/lib/bindster.js?ver=0"></script>
-<script src="semotus/objectTemplate.js?ver=0"></script>
-<script src="semotus/remoteObjectTemplate.js"></script>
-<script src="semotus/client.js?ver=0"></script>
-<script src="js/person.js?ver=0"></script>
-<script src="js/project.js?ver=0"></script>
-<script src="js/ticket.js?ver=0"></script>
-<script src="js/baseController.js?ver=0"></script>
-<script src="js/controller.js?ver=0"></script>
-<script src="modules/semotus-userman/index.js?ver=0"></script>
-<script src="semotus/init/ticket.js?ver=0"></script>
-<link href="css/bootstrap.min.css" rel="stylesheet">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="description" content="Amorphic sample application">
+    <meta name="keywords" content="amorphic nodejs mongodb">
+    <meta name="title" content="Amorphic sample application">
+    <title> Amorphic Ticket Demo </title>
 
-<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-<!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-<![endif]-->
+    <!-- First include your library files -->
+    <script src="modules/q/q.js?ver=0q.js?ver=0"></script>
+    <script src="js/lib/underscore.js?ver=0"></script>
 
+    <!-- Then include the amorphic files -->
+    <script src="bindster/index.js?ver=0"></script>
+    <script src="supertype/index.js?ver=0"></script>
+    <script src="semotus/index.js?ver=0"></script>
+    <script src="amorphic/client.js?ver=0"></script>
 
-<title> Semotus Ticket Demo </title>
+    <!-- Finally include the model and any modules needed-->
+    <script src="js/person.js?ver=0"></script>
+    <script src="js/project.js?ver=0"></script>
+    <script src="js/ticket.js?ver=0"></script>
+    <script src="js/baseController.js?ver=0"></script>
+    <script src="js/controller.js?ver=0"></script>
+    <script src="modules/semotus-userman/index.js?ver=0"></script>
+
+    <!-- Dynamically generated script that will contain the controller -->
+    <script src="amorphic/init/ticket.js?ver=0"></script>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
 </head>
 
 <body style="visibility:hidden;">
-<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <ul class="nav navbar-nav" b:showif="!loggedIn">
-        <li b:class="page=='home' ? 'active' : ''}"><a href="#home">Home</a></li>
-        <li b:class="page=='login' ? 'active' : ''}"><a href="#login">Login</a></li>
-        <li b:class="page=='register'' ? 'active' : ''}"><a href="#register">Register</a></li>
-        <li b:showif="loggedIn"><a href="#" b:onclick="logout()">Logout</a></li>
-    </ul>
-    <ul class="nav navbar-nav" b:showif="loggedIn">
-        <li b:class="page=='home' ? 'active' : ''}"><a href="#home">Home</a></li>
-        <li b:class="page=='tickets' ? 'active' : ''}"><a href="#" b:onclick="setPage('tickets')">Tickets</a></li>
-        <li b:class="page=='project' ? 'active' : ''}"><a href="#" b:onclick="setPage('projects')">Projects</a></li>
-        <li b:class="page=='people' ? 'active' : ''}"><a href="#" b:onclick="setPage('people')">People</a></li>
-        <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Hello <span b:bind="person.firstName"></span><b class="caret"></b></a>
-            <ul class="dropdown-menu">
-                <li><a href="#" b:onclick="logout()">Logout</a></li>
-                <li><a href="#" b:onclick="setPage('change_email')">Change email</a></li>
-                <li><a href="#" b:onclick="setPage('change_password')">Change Password</a></li>
-            </ul>
-        </li>
-    </ul>
-</nav>
 
-<!--#include virtual="inc/mappers.html" -->
-<!--#include virtual="inc/messages.html" -->
+    <b:include url="menu.html"></b:include>
 
-<div class="container" style="margin-top: 50px">
+    <!--#include virtual="inc/mappers.html" -->
+    <!--#include virtual="inc/messages.html" -->
 
-    <a name="home" b:onarrival="setPage('home')"></a>
-    <a name="" b:onarrival="setPage('home')"></a>
+    <div class="container" style="margin-top: 50px">
 
-    <b:if test="page == 'home'">
-        <div b:showif="loggedIn" class="page-header">
-            <h1>Hey <span b:bind="person.firstName"></span></h1>
-            <p>Welcome to the Semotus Ticket Demo</p>
-        </div>
-        <div b:showif="!loggedIn" class="page-header">
-            <h1>Welcome to the Semotus Ticket Demo</h1>
-            <p>Semotus is an open source project on <a href="https://github.com/selsamman/semotus" target="_blank">github</a></p>
-        </div>
-        <div style="text-align: center;color: red;margin-top: 20px" b:bind="error"></div>
-    </b:if>
+        <a name="home" b:onarrival="setPage('home')"></a>
+        <a name="" b:onarrival="setPage('home')"></a>
 
-    <a name="login" b:onarrival="setPage('login')"></a>
+        <!-- HOME PAGE GOES HERE WHERE SEARCH ENGINES WILL SEE IT -->
 
-    <b:if test="page == 'login'">
-        <b:include url="modules/semotus-userman/pages/login.html"></b:include>
-    </b:if>
+        <b:if test="page == 'home'">
 
-    <a name="register" b:onarrival="setPage('register')"></a>
-    <b:if test="page == 'register'">
-        <b:include url="modules/semotus-userman/pages/registration.html"></b:include>
-    </b:if>
-    <a name="verify_email" b:onarrival="verify_email"></a>
-    <b:if test="page == 'registration_confirmation'">
-        <b:include url="modules/semotus-userman/pages/registration_confirmation.html"></b:include>
-    </b:if>
+            <div b:showif="loggedIn" class="page-header">
 
-    <a name="change_email" b:onarrival="setPage('change_email')"></a>
-    <b:if test="page == 'change_email'">
-        <b:include url="modules/semotus-userman/pages/change_email.html"></b:include>
-    </b:if>
-    <b:if test="page == 'change_email_confirmation'">
-        <b:include url="modules/semotus-userman/pages/change_email_confirmation.html"></b:include>
-    </b:if>
+                <h1>Hey <span b:bind="person.firstName"></span></h1>
+                <p>
+                    Welcome to the Semotus Ticket Demo
+                </p>
 
-    <a name="change_password" b:onarrival="setPage('change_password')"></a>
-    <b:if test="page == 'change_password'">
-        <b:include url="modules/semotus-userman/pages/change_password.html"></b:include>
-    </b:if>
-    <b:if test="page == 'change_password_confirmation'">
-        <b:include url="modules/semotus-userman/pages/change_password_confirmation.html"></b:include>
-    </b:if>
+            </div>
 
-    <a name="reset_password_request" b:onarrival="setPage('reset_password_request')"></a>
-    <b:if test="page == 'reset_password_request'">
-        <b:include url="modules/semotus-userman/pages/reset_password_request.html"></b:include>
-    </b:if>
-    <b:if test="page == 'reset_password_instructions'">
-        <b:include url="modules/semotus-userman/pages/reset_password_instructions.html"></b:include>
-    </b:if>
+            <div b:showif="!loggedIn" class="page-header">
+                <h1>Welcome to the Semotus Ticket Demo</h1>
+                <p>
+                    Semotus is an open source project on
+                    <a href="https://github.com/selsamman/semotus" target="_blank">github</a>
+                </p>
+            </div>
 
-    <a name="reset_password_token" b:onarrival="resetPassword()"></a>
-    <b:if test="page == 'reset_password'">
-        <b:include url="modules/semotus-userman/pages/reset_password.html"></b:include>
-    </b:if>
-    <b:if test="page == 'reset_password_confirmation'">
-        <b:include url="modules/semotus-userman/pages/change_password_confirmation.html"></b:include>
-    </b:if>
+            <div style="text-align: center;color: red;margin-top: 20px" b:bind="error"></div>
 
-    <a name="people" b:onarrival="setPage('people')"></a>
-    <b:if test="page == 'people'">
-        <b:include url="people.html"></b:include>
-    </b:if>
+        </b:if>
 
-    <a name="tickets" b:onarrival="setPage('tickets')"></a>
-    <b:if test="page == 'tickets'">
-        <b:include url="tickets.html"></b:include>
-    </b:if>
+        <!-- Routes that define a mapping of a hash mark to and html file -->
 
-    <a name="ticket" b:onarrival="setPage('ticket')"></a>
-    <b:if test="page == 'ticket'">
-        <b:include url="ticket.html"></b:include>
-    </b:if>
-
-    <a name="projects" b:onarrival="setPage('projects')"></a>
-    <b:if test="page == 'projects'">
-        <b:include url="projects.html"></b:include>
-    </b:if>
-
-    <a name="project" b:onarrival="setPage('project')"></a>
-    <b:if test="page == 'project'">
-        <b:include url="project.html"></b:include>
-    </b:if>
-
-</div>
+        <b:pageroute hash="login" page="modules/semotus-userman/pages/login.html"></b:pageroute>
+        <b:pageroute hash="registration" page="modules/semotus-userman/pages/registration.html"></b:pageroute>
+        <b:pageroute hash="change_email" page="modules/semotus-userman/pages/change_email.html"></b:pageroute>
+        <b:pageroute hash="change_email_confirmation" page="modules/semotus-userman/pages/change_email_confirmation.html"></b:pageroute>
+        <b:pageroute hash="change_password" page="modules/semotus-userman/pages/change_password.html"></b:pageroute>
+        <b:pageroute hash="change_password_confirmation" page="modules/semotus-userman/pages/change_password_confirmation.html"></b:pageroute>
+        <b:pageroute hash="reset_password_request" page="modules/semotus-userman/pages/reset_password_request.html"></b:pageroute>
+        <b:pageroute hash="reset_password_instructions" page="modules/semotus-userman/pages/reset_password_instructions.html"></b:pageroute>
+        <b:pageroute hash="reset_password" page="modules/semotus-userman/pages/reset_password.html"></b:pageroute>
+        <b:pageroute hash="reset_password_confirmation" page="modules/semotus-userman/pages/reset_password_confirmation.html"></b:pageroute>
+        <b:pageroute hash="people" page="people.html"></b:pageroute>
+        <b:pageroute hash="tickets" page="tickets.html"></b:pageroute>
+        <b:pageroute hash="ticket" page="ticket.html"></b:pageroute>
+        <b:pageroute hash="projects" page="projects.html"></b:pageroute>
+        <b:pageroute hash="project" page="project.html"></b:pageroute>
 
 
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="js/lib/jquery.js"></script>
-<!-- Include all compiled plugins (below), or include individual files as needed -->
+    </div>
 
-<script src="js/lib/bootstrap.min.js"></script>
-
-</body>
-
-<script>
-
-    var __ver = "?ver=0".replace(/\?ver=/, "");
-    var controller;
-    var bindster = null;
-
-    // Bind bindster to semotus
-    semotus.establishClientSession(
-
-        "Controller", __ver,
-
-         // Establish a new session whether first time or because of expiry / server restart
-        function (newController, sessionExpiration) {
-
-            if (controller && typeof(controller.shutdown) == "function")
-                controller.shutdown();
-            controller = newController;
-
-            console.log("creating bindster binding");
-
-            if (!bindster) {
-                bindster = new Bindster(controller, null, controller, null, true);
-                bindster.alert = function (msg) {
-                    //controller.serverLog(msg);
-                    alert(msg);
-                }
-                if (typeof(controller.clientInit) == "function")
-                    controller.clientInit(sessionExpiration);
-                bindster.start();
-            } else {
-                bindster.setModel(controller)
-                bindster.setController(controller);
-                if (typeof(controller.clientInit) == "function")
-                    controller.clientInit(sessionExpiration);
-                controller.refresh(1);
-            }
-        },
-
-        // Rerender after xhr request received
-        function () {
-            controller.refresh(1);
-        },
-
-        // When a new version is detected pop up "about to be refreshed" and
-        // then reload the document after 5 seconds.
-        function () {
-            controller.lightBox='reload';
-            setTimeout(function () {document.location.reload(true)}, 5000);
-        },
-
-        // If communication lost pop up dialog
-        function () {
-            controller.oldrmode = controller.lightBox;
-            controller.lightBox='offline';
-        }
-
-    );
-
-</script>
+    <script src="js/lib/jquery.js"></script>
+    <script src="js/lib/bootstrap.min.js"></script>
+    <script src="bindster/bindster-amorphic.js"></script>
 
 </body>
 </html>

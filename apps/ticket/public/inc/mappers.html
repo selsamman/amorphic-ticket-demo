@@ -1,39 +1,9 @@
-<b:mapper tag="sectionstatic">
-    <a b:match="__name__.*" b:onarrival="pstyle='__pstyle__';goTo('__name__');pageInit();if (typeof(__name__Init) == 'function'){__name__Init()};pageTrack();savePage()"></a>
-    <div data-show-if="isPage('__name__')">
-        <b:insert></b:insert>
-    </div>
-</b:mapper>
-<b:mapper tag="section">
-    <a b:match="__name__.*" b:onarrival="pendingPage = '__name__'"></a>
-    <div data-show-if="pendingPage == '__name__' || isPage('__name__')">
-        <b:include insert="div" url="__url__" aysnc="true" ifloaded="if (pendingPage == '__name__'){pageLoaded('__name__', '__pstyle__')}">
-            <div data-show-if="isPage('__name__')">
-                <b:insert></b:insert>
-            </div>
-        </b:include>
-    </div>
-</b:mapper>
 
-<b:mapper tag="subsection">
-    <div data-show-if="seq == '__seq__'">
-        <b:insert></b:insert>
-    </div>
-</b:mapper>
-
-
-<b:mapper tag="helpdialog">
-    <a class="helpdialogtext" href="#" b:onclick="rmode='__id__'" b:bind="'__text__'" tabindex="-1"></a>
-    <div class="popupContainer" b:showif="rmode=='__id__'">
-        <div class="popupBody" style="height: __height__px;width:__width__px">
-            <b:insert></b:insert>
-            <div class="center">
-                <a b:style="__linkstyle__" href="#" b:onclick="rmode=''" class="modernButton modernButtonCompact modernButtonSilver"><span>close</span></a>
-            </div>
-
-        </div>
-
-    </div>
+<b:mapper tag="pageroute">
+    <a b:match="__hash__$" b:onarrival="setPage('__hash__')"></a>
+    <b:if test="page == '__hash__'">
+        <b:include url="__page__"></b:include>
+    </b:if>
 </b:mapper>
 
 <b:mapper tag="textfield">

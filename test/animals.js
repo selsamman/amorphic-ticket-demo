@@ -1,6 +1,6 @@
 var expect = require('chai').expect;
 var Q = require("q");
-var ObjectTemplate = require('semotus/objectTemplate.js');
+var ObjectTemplate = require('supertype');
 
 var fuck = "you";
 

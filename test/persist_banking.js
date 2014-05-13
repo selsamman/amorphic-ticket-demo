@@ -6,8 +6,8 @@
 
 var expect = require('chai').expect;
 var Q = require("q");
-var ObjectTemplate = require('semotus/objectTemplate.js');
-var PersistObjectTemplate = require('semotus/persistObjectTemplate.js')(ObjectTemplate, null, ObjectTemplate);
+var ObjectTemplate = require('supertype');
+var PersistObjectTemplate = require('persistor')(ObjectTemplate, null, ObjectTemplate);
 PersistObjectTemplate.foo = "bar";
 
 var Customer = PersistObjectTemplate.create("customer:Customer", {
