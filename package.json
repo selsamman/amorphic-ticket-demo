@@ -1,7 +1,7 @@
 {
     "name": "semotus",
     "subdomain": "semotus",
-    "version": "0.0.91",
+    "version": "0.0.92",
     "engines": {
         "node": "0.10.x"
     },

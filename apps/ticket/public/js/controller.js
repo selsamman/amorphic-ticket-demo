@@ -93,7 +93,7 @@ module.exports.controller = function (objectTemplate, getTemplate)
             if (!this.project || !this.project.created) {
                 this.project = new Project("");
                 if (_.indexOf(this.projects, this.project) < 0)
-                    this.projects.splice(0, 0, project);
+                    this.projects.splice(0, 0, this.project);
                 this.error = null;
             }
             this.setPage('project');
