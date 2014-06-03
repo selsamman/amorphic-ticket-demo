@@ -108,7 +108,7 @@ module.exports.project = function (objectTemplate, getTemplate)
 	});
 
 	return {
-		ProjectRole: ProjectRole,
+        ProjectRole: ProjectRole,
 		ProjectRelease: ProjectRelease,
 		Project: Project
 	}

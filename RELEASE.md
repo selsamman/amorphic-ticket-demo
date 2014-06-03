@@ -1,6 +1,5 @@
-Release History
-
-V0.1
+## 0.91
+* Fixed semotus-userman user management
  
 
 

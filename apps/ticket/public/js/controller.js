@@ -156,7 +156,7 @@ module.exports.controller = function (objectTemplate, getTemplate)
             {
                 this.verifyEmailCode = RegExp.$2;
                 this.email = decodeURIComponent(RegExp.$1);
-                this.docuSign.publicVerifyEmailFromCode('registration_confirmation');
+                this.publicVerifyEmailFromCode('registration_confirmation');
 
             } else
 

@@ -2,10 +2,7 @@
     "port": 3001,
     "sessionSeconds" : 3600,
     "objectCacheSeconds" : 600,
+    "sessionSecret" : "Ey0veeljPcLsHitdxCG2",
 	"applications" : {"ticket": "apps/ticket"},
-	"application"  : "ticket",
-	"dbPath":       "mongodb://localhost:27017/",
-	"dbName":       "ticket",
-	"dbTestName":   "ticket_test"
-
+	"application"  : "ticket"
 }

@@ -8,7 +8,8 @@
         "userman":  {
             "require": "semotus-userman",
             "controller": {"require": "controller", "template": "Controller"},
-            "principal": {"require" : "person", "template": "Person"}
+            "principal": {"require" : "person", "template": "Person"},
+            "validateEmail": true
         },
         "mandrill": {
             "require" : "semotus-mandrill",

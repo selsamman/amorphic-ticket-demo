@@ -19,15 +19,7 @@
     <script src="semotus/index.js?ver=0"></script>
     <script src="amorphic/client.js?ver=0"></script>
 
-    <!-- Finally include the model and any modules needed-->
-    <script src="js/person.js?ver=0"></script>
-    <script src="js/project.js?ver=0"></script>
-    <script src="js/ticket.js?ver=0"></script>
-    <script src="js/baseController.js?ver=0"></script>
-    <script src="js/controller.js?ver=0"></script>
-    <script src="modules/semotus-userman/index.js?ver=0"></script>
-
-    <!-- Dynamically generated script that will contain the controller -->
+    <!-- Dynamically generated script that will contain the controller and related objects -->
     <script src="amorphic/init/ticket.js?ver=0"></script>
 
     <!-- Bootstrap -->
@@ -80,6 +72,8 @@
 
         <b:pageroute hash="login" page="modules/semotus-userman/pages/login.html"></b:pageroute>
         <b:pageroute hash="registration" page="modules/semotus-userman/pages/registration.html"></b:pageroute>
+        <b:pageroute hash="registration_instructions" page="modules/semotus-userman/pages/registration_instructions.html"></b:pageroute>
+        <b:pageroute hash="registration_confirmation" page="modules/semotus-userman/pages/registration_confirmation.html"></b:pageroute>
         <b:pageroute hash="change_email" page="modules/semotus-userman/pages/change_email.html"></b:pageroute>
         <b:pageroute hash="change_email_confirmation" page="modules/semotus-userman/pages/change_email_confirmation.html"></b:pageroute>
         <b:pageroute hash="change_password" page="modules/semotus-userman/pages/change_password.html"></b:pageroute>
@@ -93,6 +87,8 @@
         <b:pageroute hash="ticket" page="ticket.html"></b:pageroute>
         <b:pageroute hash="projects" page="projects.html"></b:pageroute>
         <b:pageroute hash="project" page="project.html"></b:pageroute>
+        <a b:match="verify_email$" b:onarrival="verifyEmail()"></a>
+        <a b:match="reset_password_from_code$" b:onarrival="resetPassword()"></a>
 
 
     </div>
