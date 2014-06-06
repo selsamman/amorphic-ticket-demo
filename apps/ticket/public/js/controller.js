@@ -16,7 +16,8 @@ module.exports.controller = function (objectTemplate, getTemplate)
     Controller = BaseController.extend(
 	{
         // Global properties
-		page:			{type: String, value: ''},          // The current page (hash name)
+		page:			{type: String, value: ''},          // The current page (path minus slash)
+        file:           {type: String, value: ''},          // HTML file to load
 		error:          {type: String},                     // Non-field specific error condition
 		status:         {type: String},                     // Information status (e.g. saved at at ...)
 
@@ -47,7 +48,7 @@ module.exports.controller = function (objectTemplate, getTemplate)
                     this.tickets.splice(0, 0, this.ticket);
                 this.error = null;
             }
-            this.setPage('ticket');
+            this.route.private.ticket();
         },
 
         // Ask the ticket to save itself and update our list of tickets
@@ -96,7 +97,7 @@ module.exports.controller = function (objectTemplate, getTemplate)
                     this.projects.splice(0, 0, this.project);
                 this.error = null;
             }
-            this.setPage('project');
+            this.route.private.project();
 		},
 
 	    saveProject: {on: "server", body: function ()
@@ -127,40 +128,17 @@ module.exports.controller = function (objectTemplate, getTemplate)
 		}},
 
         /*
-        * -------  Housekeeping ----------------------------------------------------------------------
-        */
+         * -------  Housekeeping ----------------------------------------------------------------------
+         */
 
 		clientInit: function ()
 		{
             BaseController.prototype.clientInit.call(this);
         },
-
-        // This will eventually be embedded in the router
-        resetPassword: function ()
-        {
-            if (document.location.search.match(/email=(.*?)&token=(.*)/))
-            {
-                this.passwordChangeHash = RegExp.$2;
-                this.email = decodeURIComponent(RegExp.$1);
-                this.setPage('reset_password');
-
-            } else
-
-                alert('Please try pasting the link from your email into the browser address bar')
-        },
-
-        // This will eventually be embedded in the router
-        verifyEmail: function ()
-        {
-            if (document.location.search.match(/email=(.*?)&code=(.*)/))
-            {
-                this.verifyEmailCode = RegExp.$2;
-                this.email = decodeURIComponent(RegExp.$1);
-                this.publicVerifyEmailFromCode('registration_confirmation');
-
-            } else
-
-                alert('Please try pasting the link from your email into the browser address bar')
+        routerInit: function (router) {
+            this.router = router;
+            this.route = router.route;
+            //this.router.goTo(this.page)
         },
 
         login: function ()
@@ -187,32 +165,25 @@ module.exports.controller = function (objectTemplate, getTemplate)
         },
 
         /**
-         * Set the current page
-         *
-         * @param name of page
-         * @param not used
-         * @param subpage (bookmark)
-        */
-		setPage: {on: "client", body: function (page, force, subpage)
-        {
+         * Setup the controller to display a given file
+         * @param page
+         * @param file
+         */
+        pageInit: function (file) {
             this.password = "";
             this.newPassword = "";
             this.confirmPassword = "";
             this.error = "";
-			var url = page + (subpage ? "_" + subpage : "");
-			if (window.history && window.history.pushState) {
-				window.history.pushState({}, document.title, "/#" + url);
-			} else {
-                if (document.location.pathname != '/')
-				    document.location.pathname = '/';
-				document.location.hash = '#' + url;
-			}
+        },
 
-			this.sub = subpage ? subpage : '';
-			this.page = page;
-			this.scrollTo = page;
-			if (typeof(this[page + 'Init']) == 'function')
-				this[page + 'Init']();
+        /**
+         * Set the current page
+         *
+         * @param page (router path but without the initial slash needed)
+         */
+		setPage: {on: "client", body: function (page)
+        {
+            this.router.goTo(page);
  		}},
 
         isPage: function(name) {
@@ -230,19 +201,17 @@ module.exports.controller = function (objectTemplate, getTemplate)
         },
 
         /**
-         * Security check on remote calls
+         * Security check on remote calls is execute from semotus before executing a call on the server
          *
          * @param functionName
          * @returns {Boolean} - whether to proceed with call
          */
-        validateServerCall: function (functionName) // called by semotus prior to anyfunction call
+        validateServerCall: function (functionName)
         {
             if (functionName.match(/^public/))
                 return true;
             return this.securityContext ? true : false;
         }
-
-
     });
 
     return {Controller: Controller};

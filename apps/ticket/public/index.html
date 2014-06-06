@@ -14,10 +14,10 @@
     <script src="js/lib/underscore.js?ver=0"></script>
 
     <!-- Then include the amorphic files -->
-    <script src="bindster/index.js?ver=0"></script>
     <script src="supertype/index.js?ver=0"></script>
     <script src="semotus/index.js?ver=0"></script>
     <script src="amorphic/client.js?ver=0"></script>
+    <script src="bindster/index.js?ver=1"></script>
 
     <!-- Dynamically generated script that will contain the controller and related objects -->
     <script src="amorphic/init/ticket.js?ver=0"></script>
@@ -40,27 +40,24 @@
 
     <div class="container" style="margin-top: 50px">
 
-        <a name="home" b:onarrival="setPage('home')"></a>
-        <a name="" b:onarrival="setPage('home')"></a>
-
         <!-- HOME PAGE GOES HERE WHERE SEARCH ENGINES WILL SEE IT -->
 
-        <b:if test="page == 'home'">
+        <b:if test="!file">
 
             <div b:showif="loggedIn" class="page-header">
 
                 <h1>Hey <span b:bind="person.firstName"></span></h1>
                 <p>
-                    Welcome to the Semotus Ticket Demo
+                    Welcome to the Amorphic Ticket Demo
                 </p>
 
             </div>
 
             <div b:showif="!loggedIn" class="page-header">
-                <h1>Welcome to the Semotus Ticket Demo</h1>
+                <h1>Welcome to the Amorphic Ticket Demo</h1>
                 <p>
-                    Semotus is an open source project on
-                    <a href="https://github.com/selsamman/semotus" target="_blank">github</a>
+                    Amorphic is an open source project on
+                    <a href="https://github.com/selsamman/amorphic" target="_blank">github</a>
                 </p>
             </div>
 
@@ -68,34 +65,17 @@
 
         </b:if>
 
-        <!-- Routes that define a mapping of a hash mark to and html file -->
-
-        <b:pageroute hash="login" page="modules/semotus-userman/pages/login.html"></b:pageroute>
-        <b:pageroute hash="registration" page="modules/semotus-userman/pages/registration.html"></b:pageroute>
-        <b:pageroute hash="registration_instructions" page="modules/semotus-userman/pages/registration_instructions.html"></b:pageroute>
-        <b:pageroute hash="registration_confirmation" page="modules/semotus-userman/pages/registration_confirmation.html"></b:pageroute>
-        <b:pageroute hash="change_email" page="modules/semotus-userman/pages/change_email.html"></b:pageroute>
-        <b:pageroute hash="change_email_confirmation" page="modules/semotus-userman/pages/change_email_confirmation.html"></b:pageroute>
-        <b:pageroute hash="change_password" page="modules/semotus-userman/pages/change_password.html"></b:pageroute>
-        <b:pageroute hash="change_password_confirmation" page="modules/semotus-userman/pages/change_password_confirmation.html"></b:pageroute>
-        <b:pageroute hash="reset_password_request" page="modules/semotus-userman/pages/reset_password_request.html"></b:pageroute>
-        <b:pageroute hash="reset_password_instructions" page="modules/semotus-userman/pages/reset_password_instructions.html"></b:pageroute>
-        <b:pageroute hash="reset_password" page="modules/semotus-userman/pages/reset_password.html"></b:pageroute>
-        <b:pageroute hash="reset_password_confirmation" page="modules/semotus-userman/pages/reset_password_confirmation.html"></b:pageroute>
-        <b:pageroute hash="people" page="people.html"></b:pageroute>
-        <b:pageroute hash="tickets" page="tickets.html"></b:pageroute>
-        <b:pageroute hash="ticket" page="ticket.html"></b:pageroute>
-        <b:pageroute hash="projects" page="projects.html"></b:pageroute>
-        <b:pageroute hash="project" page="project.html"></b:pageroute>
-        <a b:match="verify_email$" b:onarrival="verifyEmail()"></a>
-        <a b:match="reset_password_from_code$" b:onarrival="resetPassword()"></a>
-
+        <b:if test="file">
+            <b:include url="{file}"></b:include>
+        </b:if>
 
     </div>
 
     <script src="js/lib/jquery.js"></script>
     <script src="js/lib/bootstrap.min.js"></script>
     <script src="bindster/bindster-amorphic.js"></script>
+    <script src="bindster/router.js?ver=0"></script>
+    <script src="js/router.js?ver=0"></script>
 
 </body>
 </html>
