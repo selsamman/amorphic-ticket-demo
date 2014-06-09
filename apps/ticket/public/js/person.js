@@ -24,6 +24,12 @@ module.exports.person = function (objectTemplate, getTemplate)
 			},
             save: function () {
                return this.persistSave();
+            },
+            remove: function () {
+                if (this.getSecurityContext().isAdmin())
+                    return this.persistDelete();
+                else
+                    return Q(false);
             }
 
 		});

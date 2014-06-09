@@ -58,11 +58,13 @@ module.exports.ticket = function (objectTemplate, getTemplate)
         {
 			for (var ix = 0; ix < this.ticketItems; ++ix)
 				this.ticketItems[ix].remove();
-			return this.persistDelete();
-            if (this.project)
+            if (this.project) {
                 for (var ix = 0; ix < this.project.tickets.length; ++ix)
                     if (this.project.tickets[ix] == this)
-                        this.project.splice(ix,1)
+                        this.project.splice(ix, 1);
+                this.project.save();
+            }
+            return this.persistDelete();
 		}},
 
 		save: {on: "server", body: function ()

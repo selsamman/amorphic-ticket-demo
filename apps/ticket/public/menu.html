@@ -11,7 +11,7 @@
         <li b:class="page=='project' ? 'active' : ''}"><a href="#" b:onclick="route.private.projects()">Projects</a></li>
         <li b:class="page=='people' ? 'active' : ''}"><a href="#" b:onclick="route.private.people()">People</a></li>
         <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Hello <span b:bind="person.firstName"></span><b class="caret"></b></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Hello <span b:bind="principal.firstName"></span><b class="caret"></b></a>
             <ul class="dropdown-menu">
                 <li><a href="#" b:onclick="logout()">Logout</a></li>
                 <li><a href="#" b:onclick="route.private.change_email()">Change email</a></li>

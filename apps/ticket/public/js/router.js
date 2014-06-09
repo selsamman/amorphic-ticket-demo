@@ -42,7 +42,8 @@ AmorphicRouter.route(controller, {
                     enter: function () {
                         this.publicVerifyEmailFromCode('registration_confirmation');
                     }
-                }
+                },
+                init_all: {enter: function () {controller.publicInitAll()}}
             }
         },
         private: {
@@ -56,8 +57,9 @@ AmorphicRouter.route(controller, {
                 tickets: {file: "tickets.html"},
                 ticket: {file: "ticket.html"},
                 projects: {file: "projects.html"},
-                project: {file: "project.html"}
-              }
+                project: {file: "project.html"},
+                delete_all: {enter: function () {controller.deleteAll()}}
+            }
         }
     }
 });

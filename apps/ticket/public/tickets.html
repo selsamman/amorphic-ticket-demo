@@ -17,7 +17,7 @@
         </thead>
         <tbody>
         <tr b:iterateon="tickets" b:iteratewith="row">
-            <td><a href="#" b:onclick="ticket=row;setPage('ticket')" b:bind="row.title || 'unnamed'"></a></td>
+            <td><a href="#" b:onclick="ticket=row;route.private.ticket()" b:bind="row.title || 'unnamed'"></a></td>
             <td b:bind="row.created"></td>
             <td b:bind="row.creator ? row.creator.getFullName() : 'unknown'"></td>
             <td><a href="#" b:onclick="ticket=row;deleteTicket()">Delete</a></td>

@@ -42,7 +42,7 @@ module.exports.controller = function (objectTemplate, getTemplate)
         // Create a new ticket and make it current
         newTicket: function ()
         {
-            if (!this.ticket && !this.ticket.created) {
+            if (!this.ticket || this.ticket.created) {
                 this.ticket = new Ticket();
                 if (_.indexOf(this.tickets, this.ticket) < 0) // Add to list
                     this.tickets.splice(0, 0, this.ticket);
@@ -84,14 +84,66 @@ module.exports.controller = function (objectTemplate, getTemplate)
                 }.bind(this));
 		}},
 
+        /*
+         * -------  Project functions ----------------------------------------------------------------
+         */
+        deletePerson: {
+            on: "server",
+            body: function (person)
+        {
+            if (this.securityContext.isAdmin()) {
+                person.remove().then(function () {
+                    this.createAdmin();
+                    if (this.principal == person)
+                        this.logout('');
+                }.bind(this));
+            }
+        }},
+
 		/*
-		 * -------  Project functions ----------------------------------------------------------------
+		 * -------  General Functions ----------------------------------------------------------------
 		 */
+        deleteAll: {
+            // This could start a lot of asynchronous activity.  In the real world you would not do this
+            // but in the real world you would not have a deleteAll() :-)
+            on: "server",
+            body: function ()
+        {
+            if (this.securityContext.isAdmin()) {
+                this.projectsFetch().then (function () {
+                    _.map(this.projects, function (project) {
+                        this.project = project;
+                        this.deleteProject();
+                    });
+                    return this.ticketsFetch();
+                }.bind(this)).then(function () {
+                    _.map(this.tickets, function (ticket) {
+                        this.ticket = ticket;
+                        this.deleteTicket();
+                    });
+                    return this.personsFetch();
+                }.bind(this)).then(function () {
+                    _.map(this.person, function (person) {
+                        this.deletePerson(person);
+                    });
+                    this.logout('');
+                }.bind(this));
+            }
+        }},
+        /**
+         * If no admin's present create one
+         */
+        publicInitAll: {
+            on: "server",
+            body: function ()
+        {
+            this.createAdmin();
+        }},
 
         // create a new project to be saved later
 		newProject: function ()
         {
-            if (!this.project || !this.project.created) {
+            if (!this.project || this.project.created) {
                 this.project = new Project("");
                 if (_.indexOf(this.projects, this.project) < 0)
                     this.projects.splice(0, 0, this.project);

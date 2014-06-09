@@ -1,7 +1,6 @@
 {
 	"dbPath":       "mongodb://localhost:27017/",
 	"dbName":       "ticket",
-	"dbTestName":   "ticket_test",
     "createControllerFor": "#",
 	"ver":          "0",
     "modules":      {

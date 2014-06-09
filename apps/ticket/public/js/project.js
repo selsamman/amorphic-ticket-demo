@@ -93,8 +93,10 @@ module.exports.project = function (objectTemplate, getTemplate)
 
 		save: function (authenticatedPerson)
 		{
-            this.creator = this.getSecurityContext().principal;
-            this.created = new Date();
+            if (!this.creator) {
+                this.creator = this.getSecurityContext().principal;
+                this.created = new Date();
+            }
 			return this.persistSave();
         },
         remove: function () {

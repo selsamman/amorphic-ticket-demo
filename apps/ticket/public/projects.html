@@ -18,7 +18,7 @@
         </thead>
         <tbody>
             <tr b:iterateon="projects" b:iteratewith="row">
-                <td><a href="#" b:onclick="project=row;setPage('project')" b:bind="row.name || 'unnamed'"></a></td>
+                <td><a href="#" b:onclick="project=row;route.private.project()" b:bind="row.name || 'unnamed'"></a></td>
                 <td b:bind="row.created"></td>
                 <td b:bind="row.creator ? row.creator.getFullName() : ''"></td>
                 <td><a href="#" b:onclick="project=row;deleteProject()">Delete</a></td>
