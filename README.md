@@ -19,7 +19,7 @@ An blog post intro to the framework is available on http://elsamman.com
 ## Installation
 
 * Get a copy of this project
-* Do an npm update
+* Do an npm update to bring in the latest node modules
 * Modify files in the app directory
 * Update the config.json, schema.json and router.js files according to your needs
 
