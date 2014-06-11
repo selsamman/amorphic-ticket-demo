@@ -8,7 +8,7 @@ The key features include:
 
 - An object broker to keep object instances in sync between browser and server
 
-- An ORM that persists the objects to MongoDB
+- An object broker that persists the objects to MongoDB
 
 - An application container for nodeJS to run the whole thing in
 
