@@ -1,5 +1,6 @@
 {
     "name": "amrophic-ticket-demo",
+    "subdomain": "semotus",
     "version": "0.0.92",
     "engines": {
         "node": "0.10.x"
