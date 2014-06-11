@@ -5,13 +5,13 @@
 	"ver":          "0",
     "modules":      {
         "userman":  {
-            "require": "semotus-userman",
+            "require": "amorphic-userman",
             "controller": {"require": "controller", "template": "Controller"},
             "principal": {"require" : "person", "template": "Person"},
             "validateEmail": true
         },
         "mandrill": {
-            "require" : "semotus-mandrill",
+            "require" : "amorphic-mandrill",
             "controller": {"require": "controller", "template": "Controller"},
             "senderEmail" : "sams@elsamman.com",
             "senderName": "Amorphic Team"

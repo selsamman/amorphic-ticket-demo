@@ -18,12 +18,11 @@ An blog post intro to the framework is available on http://elsamman.com
 
 ## Installation
 
-At present it is best to start with this as node.js application and then
-
-* modify files in the app directory
-* update the config.json file
-
+* Get a copy of this project
+* Do an npm update
+* Modify files in the app directory
+* Update the config.json, schema.json and router.js files according to your needs
 
 ## License
 
-amorphic is licensed under the MIT license
+Amorphic is licensed under the MIT license

@@ -11,23 +11,23 @@ AmorphicRouter.route(controller, {
                 default: {path: '', file: null},
                 home: {file: null},
 
-                login: {file: "modules/semotus-userman/pages/login.html"},
-                registration: {file: "modules/semotus-userman/pages/registration.html"},
-                registration_instructions: {file: "modules/semotus-userman/pages/registration_instructions.html"},
-                registration_confirmation: {file: "modules/semotus-userman/pages/registration_confirmation.html"},
+                login: {file: "modules/amorphic-userman/pages/login.html"},
+                registration: {file: "modules/amorphic-userman/pages/registration.html"},
+                registration_instructions: {file: "modules/amorphic-userman/pages/registration_instructions.html"},
+                registration_confirmation: {file: "modules/amorphic-userman/pages/registration_confirmation.html"},
 
-                change_email: {file: "modules/semotus-userman/pages/change_email.html"},
-                change_email_confirmation: {file: "modules/semotus-userman/pages/change_email_confirmation.html"},
-                change_password: {file: "modules/semotus-userman/pages/change_password.html"},
-                change_password_confirmation: {file: "modules/semotus-userman/pages/change_password_confirmation.html"},
+                change_email: {file: "modules/amorphic-userman/pages/change_email.html"},
+                change_email_confirmation: {file: "modules/amorphic-userman/pages/change_email_confirmation.html"},
+                change_password: {file: "modules/amorphic-userman/pages/change_password.html"},
+                change_password_confirmation: {file: "modules/amorphic-userman/pages/change_password_confirmation.html"},
 
-                reset_password_request: {file: "modules/semotus-userman/pages/reset_password_request.html"},
-                reset_password_instructions: {file: "modules/semotus-userman/pages/reset_password_instructions.html"},
-                reset_password: {file: "modules/semotus-userman/pages/reset_password.html"},
-                reset_password_confirmation: {file: "modules/semotus-userman/pages/reset_password_confirmation.html"},
+                reset_password_request: {file: "modules/amorphic-userman/pages/reset_password_request.html"},
+                reset_password_instructions: {file: "modules/amorphic-userman/pages/reset_password_instructions.html"},
+                reset_password: {file: "modules/amorphic-userman/pages/reset_password.html"},
+                reset_password_confirmation: {file: "modules/amorphic-userman/pages/reset_password_confirmation.html"},
 
                 reset_password_from_code: {
-                    file: "modules/semotus-userman/pages/reset_password.html",
+                    file: "modules/amorphic-userman/pages/reset_password.html",
                     parameters: {
                         email: {bind: "email"},
                         token: {bind: "passwordChangeHash"}
