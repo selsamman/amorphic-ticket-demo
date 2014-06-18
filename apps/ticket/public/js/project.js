@@ -36,7 +36,7 @@ module.exports.project = function (objectTemplate, getTemplate)
 		description:        {type: String, value: ""},
 		created:            {type: Date, rule: ["datetime"]},
 		creator:            {toServer: false, type: Person, fetch: true},
-		owner:              {type: Person, fetch: true},  // Needs server pattern like ticket
+		owner:              {type: Person, fetch: true},
 		roles:              {toServer: false, type: Array, of: ProjectRole, value: [], fetch: true},
 		releases:           {toServer: false, type: Array, of: ProjectRelease, value: [], fetch: true},
 

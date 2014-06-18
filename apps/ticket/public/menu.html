@@ -1,21 +1,23 @@
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <ul class="nav navbar-nav" b:showif="!loggedIn">
-        <li b:class="page=='home' ? 'active' : ''}"><a href="#" b:onclick="route.public.home()">Home</a></li>
-        <li b:class="page=='login' ? 'active' : ''}"><a href="#" b:onclick="route.public.login()">Login</a></li>
-        <li b:class="page=='register'' ? 'active' : ''}"><a href="#" b:onclick="route.public.registration()">Register</a></li>
+        <li><a href="#" b:onclick="route.public.home()">Home</a></li>
+        <li b:showif="!loggedIn"><a href="#" b:onclick="route.public.login()">Login</a></li>
+        <li><a href="#" b:onclick="route.public.registration()">Register</a></li>
         <li b:showif="loggedIn"><a href="#" b:onclick="logout()">Logout</a></li>
+        <li><a href="#" b:onclick="runTests">Tests</a></li>
     </ul>
     <ul class="nav navbar-nav" b:showif="loggedIn">
-        <li b:class="page=='home' ? 'active' : ''}"><a b:onclick="route()">Home</a></li>
-        <li b:class="page=='tickets' ? 'active' : ''}"><a href="#" b:onclick="route.private.tickets()">Tickets</a></li>
-        <li b:class="page=='project' ? 'active' : ''}"><a href="#" b:onclick="route.private.projects()">Projects</a></li>
-        <li b:class="page=='people' ? 'active' : ''}"><a href="#" b:onclick="route.private.people()">People</a></li>
+        <li><a href="#" b:onclick="route()">Home</a></li>
+        <li><a href="#" b:onclick="route.private.tickets()">Tickets</a></li>
+        <li><a href="#" b:onclick="route.private.projects()">Projects</a></li>
+        <li><a href="#" b:onclick="route.private.people()">People</a></li>
         <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Hello <span b:bind="principal.firstName"></span><b class="caret"></b></a>
             <ul class="dropdown-menu">
                 <li><a href="#" b:onclick="logout()">Logout</a></li>
                 <li><a href="#" b:onclick="route.private.change_email()">Change email</a></li>
                 <li><a href="#" b:onclick="route.private.change_password()">Change Password</a></li>
+                <li b:showif="isAdmin()"><a href="#" b:onclick="deleteAll()">Clear Database</a></li>
             </ul>
         </li>
     </ul>

@@ -91,7 +91,7 @@ module.exports.controller = function (objectTemplate, getTemplate)
             on: "server",
             body: function (person)
         {
-            if (this.securityContext.isAdmin()) {
+            if (this.isAdmin()) {
                 person.remove().then(function () {
                     this.createAdmin();
                     if (this.principal == person)
@@ -109,23 +109,24 @@ module.exports.controller = function (objectTemplate, getTemplate)
             on: "server",
             body: function ()
         {
-            if (this.securityContext.isAdmin()) {
+            if (this.isAdmin()) {
                 this.projectsFetch().then (function () {
                     _.map(this.projects, function (project) {
                         this.project = project;
                         this.deleteProject();
-                    });
+                    }.bind(this));
                     return this.ticketsFetch();
                 }.bind(this)).then(function () {
                     _.map(this.tickets, function (ticket) {
                         this.ticket = ticket;
                         this.deleteTicket();
-                    });
+                    }.bind(this));
                     return this.personsFetch();
                 }.bind(this)).then(function () {
                     _.map(this.person, function (person) {
-                        this.deletePerson(person);
-                    });
+                        if (person != this.person)
+                            this.deletePerson(person);
+                    }.bind(this));
                     this.logout('');
                 }.bind(this));
             }
@@ -178,19 +179,33 @@ module.exports.controller = function (objectTemplate, getTemplate)
 
 				}.bind(this));
 		}},
-
-        /*
-         * -------  Housekeeping ----------------------------------------------------------------------
-         */
+        runTests: function () {
+            // Invoke Mocha script
+            expect = undefined;
+            if (document.location.search.match(/test/)) {
+                this.loadScript("modules/mocha/mocha.js", function () {
+                    this.loadScript("modules/chai/chai.js", function () {
+                        mocha.ui('bdd');
+                        mocha.reporter('html');
+                        expect = chai.expect;
+                        this.loadScript("test/all.js", function () {
+                            mocha.run();
+                            this.mocha = true;
+                            document.getElementById('container').style.marginRight = "400px";
+                        });
+                    });
+                });
+            }
+        },
+            /*
+             * -------  Housekeeping ----------------------------------------------------------------------
+             */
 
 		clientInit: function ()
 		{
             BaseController.prototype.clientInit.call(this);
-        },
-        routerInit: function (router) {
-            this.router = router;
-            this.route = router.route;
-            //this.router.goTo(this.page)
+            this.router = AmorphicRouter;
+            this.route = AmorphicRouter.route(this, ticketRoutes);
         },
 
         login: function ()
@@ -262,8 +277,10 @@ module.exports.controller = function (objectTemplate, getTemplate)
         {
             if (functionName.match(/^public/))
                 return true;
-            return this.securityContext ? true : false;
+            return this.loggedIn ? true : false;
         }
+
+
     });
 
     return {Controller: Controller};

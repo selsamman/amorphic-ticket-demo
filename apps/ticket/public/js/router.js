@@ -1,4 +1,4 @@
-AmorphicRouter.route(controller, {
+var ticketRoutes = {
     enter: function (route) {
         this.page = route.__route;
         this.file = route.__file;
@@ -62,7 +62,6 @@ AmorphicRouter.route(controller, {
             }
         }
     }
-});
+};
 
-controller.routerInit(AmorphicRouter);
 

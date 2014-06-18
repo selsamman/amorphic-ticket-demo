@@ -11,7 +11,7 @@ module.exports.ticket = function (objectTemplate, getTemplate)
 		title:              {type: String, rule: ["required"]},
         titleSet:           {on: "server", body: function(value)
         {
-            if (value.match(/Sam/) && value.match(/sucks|poor|untidy|buggy|crap/))
+            if (value.match(/Sam/i) && value.match(/sucks|poor|untidy|bug|bugs|buggy|crap/i))
                 throw "Don't disparage Sam";
             this.title = value;
         }},
