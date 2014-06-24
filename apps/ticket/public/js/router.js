@@ -1,7 +1,7 @@
 var ticketRoutes = {
     enter: function (route) {
-        this.page = route.__route;
-        this.file = route.__file;
+        this.page = route.route;
+        this.file = route.file;
         this.pageInit();
     },
     routes: {
