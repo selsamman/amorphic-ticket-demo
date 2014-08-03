@@ -13,7 +13,7 @@ module.exports.controller = function (objectTemplate, getTemplate)
 	}
 
     // Main controller (any other controllers should be embedded as properties)
-    Controller = BaseController.extend(
+    Controller = BaseController.extend("Controller",
 	{
         // Global properties
 		page:			{type: String, value: ''},          // The current page (path minus slash)
