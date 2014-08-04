@@ -94,7 +94,7 @@ module.exports.controller = function (objectTemplate, getTemplate)
             if (this.isAdmin()) {
                 person.remove().then(function () {
                     this.createAdmin();
-                    if (this.principal == person)
+                    if (this.loggedInPerson == person)
                         this.logout('');
                 }.bind(this));
             }

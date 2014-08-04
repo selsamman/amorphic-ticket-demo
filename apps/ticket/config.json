@@ -6,7 +6,7 @@
     "modules":      {
         "userman":  {
             "require": "amorphic-userman",
-            "controller": {"require": "controller", "template": "Controller"},
+            "controller": {"require": "controller", "template": "Controller", "fields":{"principal": "loggedInPerson"}},
             "principal": {"require" : "person", "template": "Person"},
             "validateEmail": true
         },
