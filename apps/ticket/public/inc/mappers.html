@@ -26,6 +26,7 @@
     <label for="__id__" class="col-md-__lcols__ control-label" b:bind="'__label__'"></label>
     <div class="col-md-__fcols__">
         <textarea b:bind="__bind__" type="text" class="form-control" id="__id__" stb:placeholder="__text__" b:trigger="if(typeof(__bind__Trigger) == 'function'){__bind__Trigger()}" b:when="__when__" b:onchange="__whenchanged__" b:onenter="__onenter__"></textarea>
+        <span style="color:red" b:showif="isError('__bind__')"><br/><span b:binderror="__bind__"></span></span>
     </div>
 </b:mapper>
 

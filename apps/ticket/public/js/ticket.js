@@ -67,11 +67,11 @@ module.exports.ticket = function (objectTemplate, getTemplate)
             return this.persistDelete();
 		}},
 
-		save: {on: "server", body: function ()
+		save: {
+            on: "server",
+            validate: function () {return this.validate()},
+            body: function ()
 		{
-            if (!this.title)
-                throw "Need a title";
-
             if (!this.created)
                 this.created = new Date();
 
@@ -124,7 +124,7 @@ module.exports.ticket = function (objectTemplate, getTemplate)
 
 	var TicketItemComment = TicketItem.extend("TicketItemComment",
 	{
-		text:               {type: String, value: null},
+		text:               {type: String, rule: ['required'], value: null},
 		attachments:        {type: Array, of: TicketItemAttachment, value: []},
 
         // Only called on the server
@@ -160,14 +160,22 @@ module.exports.ticket = function (objectTemplate, getTemplate)
 	{
 		ticketItems:        {toServer: false, type: Array, of: TicketItem, value: []},
 
-        addComment: {on: "server", body: function (comment)
+        addComment: {
+            on: "server",
+            validate: function () {
+                return this.validate();
+            },
+            body: function (comment)
         {
             var comment = new TicketItemComment(this, comment);
             this.ticketItems.push(comment);
             return comment;
         }},
 
-		addApproval:  {on: "server", body: function ()
+		addApproval:  {
+            on: "server",
+            validate: function () {return this.validate();},
+            body: function ()
         {
             var person = this.getSecurityContext().principal;
 			if (!this.project)
