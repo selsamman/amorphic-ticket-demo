@@ -1,4 +1,4 @@
-{
+    {
     "Ticket": {
         "documentOf": "ticket",
         "children": {
@@ -62,9 +62,12 @@
         }
     },
     "Controller": {
-        "queries": {
-            "tickets":            {},
-            "searchTickets":      {"query": {}}
+        "documentOf": "not persistent 1",
+        "parents": {
+            "tickets": {"id": "n/a"},
+            "people": {"id": "n/a"},
+            "projects": {"id": "n/a"}
         }
     }
+
 }
