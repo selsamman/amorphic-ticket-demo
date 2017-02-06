@@ -1,7 +1,7 @@
 module.exports.baseController = function (objectTemplate, getTemplate)
 {
 
-BaseController = objectTemplate.create("Controller", {
+BaseController = objectTemplate.create("BaseController", {
 
 	errorCount:         {isLocal: true, type: Number, value: 0},
 

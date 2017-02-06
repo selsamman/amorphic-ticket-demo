@@ -1,27 +1,20 @@
-# Amorphic
+# Amorphic Ticket Demo
 ## Purpose
-Amorphic is a framework for creating object-oriented web-based applications in nodeJS and mongoDB.
-
-The key features include:
-
-- A robust type system that supports object references and collections
-
-- An object broker to keep object instances in sync between browser and server
-
-- An object broker that persists the objects to MongoDB
-
-- An application container for nodeJS to run the whole thing in
-
-This project is alpha.  While it has been used to build a large and complex nodeJS application it has not undergone the rigor of being used on a breadth of projects and as such may not cater to all use cases.  It is also subject to change and currently does not have formal documentation.
-
-An blog post intro to the framework is available on http://elsamman.com
+This project demonstrates how to use Amorphic by providing a complete example.  It uses MongoDB though it can easily be converted to MongoDB.
 
 ## Installation
 
-* Get a copy of this project
-* Do an npm update to bring in the latest node modules
-* Modify files in the app directory
-* Update the config.json, schema.json and router.js files according to your needs
+* Install MongoDB if you have not already done so
+* Checkout this project from github
+* Do an npm update to bring in the latest node modules (NPM 3.x required)
+* Run app.js with these parameters: --dbname myticketdb -port 3001
+* Go to http://localhost:3001
+* Put the application through it's paces:
+    * Register and email and password
+    * Login
+    * Go to Projects and create a project or two
+    * Go to Tickets and create a ticket or two
+* If you want the email sending to work you need to setup an account on Mandril (see amorphic mandril)
 
 ## License
 

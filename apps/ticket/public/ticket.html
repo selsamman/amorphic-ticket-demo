@@ -28,9 +28,6 @@
 
     <div class="form-group">
         <b:objectselectfield b:bind="ticket.project" id="project" lcols="2" fcols="4" label="Project" values="projects" text="name" empty="none" b:onchange="if(!ticket.project){ticket.release=null}"></b:objectselectfield>
-        <b:if test="ticket.project">
-            <b:objectselectfield b:bind="ticket.release" id="release" lcols="2" fcols="4" label="Release" values="ticket.project.releases" text="name" empty="none"></b:objectselectfield>
-        </b:if>
     </div>
 
 </form>
@@ -38,7 +35,7 @@
 <b:if test="ticket.created">
     <div class="page-header">
         <div class="pull-right">
-            <button b:onclick="ticket.addComment(comment)" type="button" class="btn btn-primary btn-lg">Add Comment</button>
+            <button b:onclick="ticket.addComment(comment);comment=''" type="button" class="btn btn-primary btn-lg">Add Comment</button>
         </div>
         <h1>Ticket Activity</h1></div>
     </div>
@@ -46,7 +43,7 @@
     <form class="form-horizontal" role="form">
 
         <div class="form-group" b:show="false">
-            <b:memofield b:bind="comment" id="comment" lcols="2" fcols="10" text="Comment" label="Comment" onenter="ticket.addComment(comment)"></b:memofield>
+            <b:memofield b:bind="comment" id="comment" lcols="2" fcols="10" text="Comment" label="Comment" onenter="ticket.addComment(comment);comment=''"></b:memofield>
         </div>
 
 

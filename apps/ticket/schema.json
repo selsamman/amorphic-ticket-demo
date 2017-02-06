@@ -6,7 +6,6 @@
         },
         "parents": {
             "creator":            {"id": "creator_id"},
-            "release":            {"id": "project_release_id"},
             "project":            {"id": "project_id"}
         }
     },
@@ -51,9 +50,6 @@
             "owner":              {"id": "owner_id"},
             "creator":            {"id": "creator_id"}
         }
-    },
-    "ProjectRelease": {
-        "subDocumentOf": "project"
     },
     "ProjectRole": {
         "subDocumentOf": "project",

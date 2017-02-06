@@ -38,7 +38,6 @@ module.exports.project = function (objectTemplate, getTemplate)
 		creator:            {toServer: false, type: Person, fetch: true},
 		owner:              {type: Person, fetch: true},
 		roles:              {toServer: false, type: Array, of: ProjectRole, value: [], fetch: true},
-		releases:           {toServer: false, type: Array, of: ProjectRelease, value: [], fetch: true},
 
 		init: function (name) {
 			this.name = name || null;
@@ -76,21 +75,6 @@ module.exports.project = function (objectTemplate, getTemplate)
 			return projectRoles;
 		},
 
-		addRelease: function (name, date) {
-			var release = new ProjectRelease();
-			release.name = name;
-			release.status = "planned"
-			release.date = date;
-			this.releases.push(release);
-		},
-
-		getRelease: function (name) {
-			for (var ix = 0; ix < this.releases.length; ++ix)
-				if (name == this.releases[ix].name)
-					return this.releases[ix];
-			return null;
-		},
-
 		save: function (authenticatedPerson)
 		{
             if (!this.creator) {
@@ -99,19 +83,14 @@ module.exports.project = function (objectTemplate, getTemplate)
             }
 			return this.persistSave();
         },
+
         remove: function () {
 			return this.persistDelete();
 		}
 	});
 
-	ProjectRelease.mixin(
-	{
-		project:            {type: Project}
-	});
-
 	return {
         ProjectRole: ProjectRole,
-		ProjectRelease: ProjectRelease,
 		Project: Project
 	}
 

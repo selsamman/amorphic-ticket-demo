@@ -13,7 +13,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr b:iterateon="people" b:iteratewith="row">
+        <tr b:iterateon="peopleGet()" b:iteratewith="row">
             <td b:bind="row.getFullName()"></td>
             <td b:bind="row.email"></td>
             <td>

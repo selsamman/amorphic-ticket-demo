@@ -24,13 +24,31 @@ module.exports.controller = function (objectTemplate, getTemplate)
 		// References to the model
 
 		ticket:         {type: Ticket},
-		tickets:        {type: Array, of: Ticket},
+		tickets:        {type: Array, of: Ticket, autoFetch: true},
+        ticketsFetch:   {on: 'server', body: function () {
+		    this.ticketsPersistor = {isFetching: false, isFetched: true};
+		    return Ticket.getFromPersistWithQuery({}).then(function (tickets) {
+		        this.tickets = tickets;
+            }.bind(this));
+        }},
 
 		person:         {type: Person},
-		people:         {type: Array, of: Person},
+		people:         {type: Array, of: Person, autoFetch: true},
+        peopleFetch:   {on: 'server', body: function () {
+            this.peoplePersistor = {isFetching: false, isFetched: true};
+            return Person.getFromPersistWithQuery({}).then(function (people) {
+                this.people = people;
+            }.bind(this));
+        }},
 
 		project:        {type: Project},
-		projects:       {type: Array, of: Project},
+		projects:       {type: Array, of: Project, autoFetch: true},
+        projectsFetch:   {on: 'server', body: function () {
+            this.projectsPersistor = {isFetching: false, isFetched: true};
+            return Project.getFromPersistWithQuery({}).then(function (projects) {
+                this.projects = projects;
+            }.bind(this));
+        }},
 
         // Temporary fields
         comment:        {type: String},                     // When adding a comment to a ticket
