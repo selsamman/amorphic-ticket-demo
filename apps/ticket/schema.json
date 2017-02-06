@@ -22,9 +22,6 @@
             "attachments":        {"id": "ticket_item_id"}
         }
     },
-    "TicketItemApproval": {
-        "documentOf": "ticketItem"
-    },
     "TicketItemAttachment": {
         "documentOf": "attachment",
         "parents": {

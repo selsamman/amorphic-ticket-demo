@@ -1,16 +1,8 @@
-module.exports.project = function (objectTemplate, getTemplate)
+module.exports.project = function (objectTemplate, uses)
 {
 
-	var Person = getTemplate('./person.js').Person;
-
-	var ProjectRelease = objectTemplate.create("ProjectRelease",
-	{
-		name:               {type: String},
-		date:               {type: Date},
-		status:             {type: String, value: "planned",
-						     fill: ["planned", "complete"],
-			                 using: {"planned":"Planned", "complete":"Completed"}}
-	});
+	var Person = uses('./person.js', 'Person');
+	var Ticket = uses('./ticket.js', 'Ticket');
 
 	var ProjectRole	= objectTemplate.create("ProjectRole",
 	{
@@ -18,12 +10,19 @@ module.exports.project = function (objectTemplate, getTemplate)
 		created:            {type: Date, rule: ["datetime"]},
 	    removed:            {type: Date, value: null},
 		person:             {type: Person, fetch: true},
+        tickets:        {type: Array, of: Ticket, value: []},
 
 		init: function(role, person) {
 			this.role = role;
 			this.person = person;
 			this.created = new Date();
 		},
+        addTicket: function (title, text) {
+            var ticket = new Ticket(title, text);
+            ticket.project = this;
+            this.tickets.push(ticket);
+            return ticket;
+        },
 		save: function() {
 		}
 
@@ -89,24 +88,4 @@ module.exports.project = function (objectTemplate, getTemplate)
 		}
 	});
 
-	return {
-        ProjectRole: ProjectRole,
-		Project: Project
-	}
-
-}
-module.exports.project_mixins = function (root, requires)
-{
-	var Ticket = requires.ticket.Ticket;
-
-	requires.project.Project.mixin(
-	{
-		tickets:        {type: Array, of: Ticket, value: []},
-		addTicket: function (title, text) {
-			var ticket = new Ticket(title, text);
-            ticket.project = this;
-            this.tickets.push(ticket);
-			return ticket;
-		}
-	});
 }

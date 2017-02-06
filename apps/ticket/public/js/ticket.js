@@ -1,8 +1,7 @@
-module.exports.ticket = function (objectTemplate, getTemplate)
+module.exports.ticket = function (objectTemplate, uses)
 {
-	var Person = getTemplate('./person.js').Person;
-	var Project = getTemplate('./project.js').Project;
-	var ProjectRelease = getTemplate('./project.js').ProjectRelease;
+	var Person = uses('./person.js', 'Person');
+	var Project = uses('./project.js', 'Project');
 
 	var Ticket = objectTemplate.create("Ticket",
 	{
@@ -22,7 +21,6 @@ module.exports.ticket = function (objectTemplate, getTemplate)
 		created:            {toServer: false, type: Date},
 		creator:            {toServer: false, type: Person, fetch: true},
 		project:            {toServer: false, type: Project, fetch: true},
-		release:            {toServer: false, type: ProjectRelease, fetch: true},
 
 		init: function (title, description)
         {
@@ -40,18 +38,6 @@ module.exports.ticket = function (objectTemplate, getTemplate)
 		        this.project = project || null;
                 return project;
             }.bind(this));
-		}},
-
-		releaseSet: {on: "server", body: function (releaseOrId)
-        {
-            var releaseId = typeof(releaseOrId) == 'string' ? releaseOrId : releaseOrId._id
-            return ProjectRelease.getFromPersistWithId(releaseId).then( function(release)
-            {
-                if (release && release.project != this.project)
-				    throw "Attempt to set ticket project release that does not belong to project";
-			    this.release = release || null;
-                return release;
-            });
 		}},
 
 		remove:  {on: "server", body: function ()
@@ -104,7 +90,6 @@ module.exports.ticket = function (objectTemplate, getTemplate)
 
 	});
 
-
 	var TicketItemAttachment = objectTemplate.create("TicketItemAttachment",
 	{
 		data:               {type: String},
@@ -145,21 +130,9 @@ module.exports.ticket = function (objectTemplate, getTemplate)
 		}
 	});
 
-
-	var TicketItemApproval = TicketItem.extend("TicketItemApproval",
-	{
-		init: function (person) {
-			TicketItem.call(this, person);
-		},
-		remove: function () {
-			this.persistDelete();
-		}
-	});
-
 	Ticket.mixin(
 	{
 		ticketItems:        {toServer: false, type: Array, of: TicketItem, value: []},
-
         addComment: {
             on: "server",
             validate: function () {
@@ -171,30 +144,8 @@ module.exports.ticket = function (objectTemplate, getTemplate)
             this.ticketItems.push(comment);
             return comment;
         }},
-
-		addApproval:  {
-            on: "server",
-            validate: function () {return this.validate();},
-            body: function ()
-        {
-            var person = this.getSecurityContext().principal;
-			if (!this.project)
-				throw "cannot approve ticket that is not assigned to a project";
-			if (!this.project.getRole( "manager", person))
-				throw "only the project manager role can approve a ticket";
-			var item = new TicketItemApproval(this, person);
-			this.ticketItems.push(item);
-			return item;
-		}}
 	});
 
-	return {
-		Ticket: Ticket,
-		TicketItem: TicketItem,
-		TicketItemAttachment: TicketItemAttachment,
-		TicketItemComment: TicketItemComment,
-		TicketItemApproval: TicketItemApproval
-	}
 }
 
 

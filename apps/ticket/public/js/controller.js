@@ -1,10 +1,10 @@
-module.exports.controller = function (objectTemplate, getTemplate)
+module.exports.controller = function (objectTemplate, uses)
 {
     // Include model
-	var BaseController = getTemplate('./baseController.js').BaseController;
-	var Person = getTemplate('./person.js').Person;
-	var Project = getTemplate('./project.js').Project;
-	var Ticket = getTemplate('./ticket.js').Ticket;
+	var BaseController = uses('./baseController.js', 'BaseController');
+	var Person = uses('./person.js', 'Person')
+	var Project = uses('./project.js', 'Project');
+	var Ticket = uses('./ticket.js', 'Ticket');
 
     // Non-Semotus modules
 	if (typeof(require) != "undefined") {
@@ -300,7 +300,5 @@ module.exports.controller = function (objectTemplate, getTemplate)
 
 
     });
-
-    return {Controller: Controller};
 }
 

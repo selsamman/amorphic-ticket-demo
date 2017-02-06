@@ -1,7 +1,9 @@
-module.exports.person = function (objectTemplate, getTemplate)
+module.exports.person = function (objectTemplate, uses)
 {
-	var Person;
-	Person = objectTemplate.create("Person",
+	var ProjectRole = uses ('./project.js', 'ProjectRole');
+	var TicketItem = uses('./ticket.js', 'TicketItem');
+
+	objectTemplate.create("Person",
 		{
 			// Name
 			firstName: {type: String, value: "", length: 40, rule: ["name", "required"]},
@@ -12,6 +14,8 @@ module.exports.person = function (objectTemplate, getTemplate)
 			email: {toServer: false, type: String, value: "", length: 200},
 
 			// Relationships
+            projectRoles:           {type: Array, of: ProjectRole, value: {}},
+            ticketItems:            {type: Array, of: TicketItem, value: {}},
 
 			init: function (email, first, middle, last) {
 				this.firstName = first || "";
@@ -34,18 +38,7 @@ module.exports.person = function (objectTemplate, getTemplate)
 
 		});
 
-	return {
-		Person: Person
-	}
 
-}
-module.exports.person_mixins = function (objectTemplate, requires)
-{
-	requires.person.Person.mixin(
-	{
-		projectRoles:           {type: Array, of: requires.project.ProjectRole, value: {}},
-		ticketItems:            {type: Array, of: requires.ticket.TicketItem, value: {}}
-	});
 }
 
 

@@ -66,9 +66,7 @@
                 <td b:bind="row.created" b:format="formatDateTime()"></td>
                 <td b:bind="row.creator.getFullName()"></td>
                 <td>
-                    <span b:showif="row instanceof TicketItemComment" b:bind="row.text"></span>
-                    <span b:showif="row instanceof TicketItemApproval"><strong>Approved</strong></span>
-                    </span>
+                    <span b:bind="row.text"></span>
                 </td>
 
             </tr>
