@@ -10,9 +10,9 @@
     },
     "dependencies": {
         "q": "0.9.x",
-        "amorphic": "0.x",
-        "amorphic-userman": "0.x",
-        "amorphic-mandrill": "0.x"
+        "amorphic": "2.0.*",
+        "amorphic-userman": "x",
+        "amorphic-mandrill": "x"
     },
     "devDependencies": {
         "chai": "1.x",
