@@ -1,23 +1,26 @@
 {
-    "name": "semotus",
-    "subdomain": "semotus",
-    "version": "0.0.92",
-    "engines": {
-        "node": "0.10.x"
-    },
-    "scripts": {
-        "start": "app.js"
-    },
-    "dependencies": {
-        "q": "0.9.x",
-        "amorphic": "2.0.*",
-        "amorphic-userman": "x",
-        "amorphic-mandrill": "x"
-    },
-    "devDependencies": {
-        "chai": "1.x",
-        "mocha": "1.x"
-    },
-    "bundledDependencies": [
-    ]
+  "name": "semotus",
+  "subdomain": "semotus",
+  "version": "0.0.92",
+  "engines": {
+    "node": "0.10.x"
+  },
+  "scripts": {
+    "start": "app.js"
+  },
+  "dependencies": {
+    "q": "0.9.x",
+    "amorphic": "2.0.*",
+    "amorphic-userman": "x",
+    "amorphic-mandrill": "x"
+  },
+  "devDependencies": {
+    "@types/chai": "^3.4.34",
+    "@types/mocha": "^2.2.39",
+    "@types/node": "^7.0.5",
+    "chai": "1.x",
+    "mocha": "1.x",
+    "typescript": "^2.1.6"
+  },
+  "bundledDependencies": []
 }
