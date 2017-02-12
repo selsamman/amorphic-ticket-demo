@@ -22,9 +22,7 @@ export class Ticket {
         if (projectName)
             this.project = new Project(projectName, projectDescription);
     };
-    addTicketItem () {
-        //this.ticketItems.push(new TicketItem(this));  // Uncomment this and you get a circular reference
-    };
+
     addComment (comment) {
         /*
          on: "server",

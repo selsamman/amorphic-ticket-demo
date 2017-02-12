@@ -15,10 +15,6 @@ export class TicketItem {
         //this.creator = this.getSecurityContext().principal;
         this.created = new Date();
     }
-
-    isComment () {
-        return this instanceof TicketItemComment;
-    }
 };
 
 
