@@ -1,6 +1,7 @@
 import { Ticket } from '../apps/ticket/public/js/tsmodel/ticket';
 import { Project } from '../apps/ticket/public/js/tsmodel/project';
 import { expect } from 'chai';
+import * as mocha from 'mocha';
 
 describe('Create a Ticket', () => {
     it('Named Correctly', () => {
