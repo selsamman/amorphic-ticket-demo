@@ -1,5 +1,7 @@
 import {Person} from './person';
 import {Project} from './project';
+import {TicketItem} from './ticketItem';
+import {TicketItemComment} from './ticketItemComment';
 
 export class Ticket {
 
@@ -14,11 +16,15 @@ export class Ticket {
 
     ticketItems: 	Array<TicketItem> = [];		//, value: []},
 
-    constructor (title, description) {
+    constructor (title : string, description : string, projectName? : string, projectDescription? : string) {
         this.title = title || null;
         this.description = description || null;
+        if (projectName)
+            this.project = new Project(projectName, projectDescription);
     };
-
+    addTicketItem () {
+        //this.ticketItems.push(new TicketItem(this));  // Uncomment this and you get a circular reference
+    };
     addComment (comment) {
         /*
          on: "server",
@@ -77,68 +83,3 @@ export class Ticket {
      }
      */
 };
-
-/**
- * Any additional informational content for ticket added after creation
- * such as a comment or an approval
- */
-export class TicketItem {
-
-    // Secure properties can only be set on the server
-    creator:            Person; 		//{toServer: false, type: Person, fetch: true},
-    created:            Date;			//{toServer: false, type: Date},
-    ticket:             Ticket;			//{toServer: false, type: Ticket},
-
-    // Only called on the server
-    constructor (ticket) {
-        this.ticket = ticket;
-        //this.creator = this.getSecurityContext().principal;
-        this.created = new Date();
-    }
-};
-
-export class TicketItemComment extends TicketItem {
-
-    text:               string;			//, rule: ['required'], value: null},
-    attachments:        Array<TicketItemAttachment>		//, value: []},
-
-    // Only called on the server
-    constructor (ticket, text) {
-        super(ticket);
-        this.text = text;
-    };
-
-    addAttachment (name, data) {
-        var attachment = new TicketItemAttachment(this, name, data);
-        this.attachments.push(attachment);
-        return attachment;
-    };
-
-    /*
-     remove () {
-     for (var ix = 0;ix < this.attachments.length;++ix)
-     this.attachments[ix].persistDelete();
-     this.persistDelete();
-     };
-     */
-};
-
-export class TicketItemAttachment {	// = objectTemplate.create("TicketItemAttachment",
-    data:               string;
-    name:               string;
-    created:            Date;
-    ticketItem:         TicketItem;
-
-    // Only called on the server
-    constructor (ticketItem, name, data) {
-        this.ticketItem = ticketItem || null;
-        this.name = name || null;
-        this.data = data || null;
-        this.created = new Date();
-    }
-};
-
-
-
-
-

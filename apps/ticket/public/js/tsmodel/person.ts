@@ -1,4 +1,4 @@
-import {TicketItem} from './ticket';
+import {TicketItem} from './ticketItem';
 
 export class Person {
 
