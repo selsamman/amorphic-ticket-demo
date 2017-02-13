@@ -6,7 +6,7 @@ import {TicketItemComment} from './ticketItemComment';
 export class Ticket {
 
     // Insecure properties can be set on the client and saved by a logged in user
-    title:			string;			// rule: ["required"]},
+    title:			String;			// rule: ["required"]},
     description:	string;			// {type: String},
 
     // Secure properties only set on the server
