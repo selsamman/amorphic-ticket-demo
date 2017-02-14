@@ -2,18 +2,51 @@ import {Person} from './person';
 import {Project} from './project';
 import {TicketItem} from './ticketItem';
 import {TicketItemComment} from './ticketItemComment';
+import "reflect-metadata";
 
+function remote (props: Object) {
+    return function (target: any, targetKey: string, descriptor: PropertyDescriptor) {
+        target.__amorphicprops__ = target.__amorphicprops__ || {}
+        target.__amorphicprops__[targetKey] = props || {};
+        // I can modify the property descriptor here to inject remote proxy
+    }
+}
+
+function property(props: Object) {
+    return function (target, targetKey) {
+        if (props['of'] )
+            props['of'] = props['of'].toString().match(new RegExp(/.*function (.*)\(/))[1]
+        target.__amorphicprops__ = target.__amorphicprops__ || {}
+        target.__amorphicprops__[targetKey] = props || {};
+        target.__amorphicprops__[targetKey].type  = Reflect.getMetadata('design:type', target, targetKey).toString().match(new RegExp(/.*function (.*)\(/))[1];
+    };
+}
+
+function amorphic(target: Function) // The class the decorator is declared on
+{
+    console.log("@amorphic generating: ", target.toString().match(new RegExp(/.*function (.*)\(/))[1] + ":" +
+        JSON.stringify(target.prototype.__amorphicprops__, null, 4))
+}
+
+@amorphic
 export class Ticket {
 
-    // Insecure properties can be set on the client and saved by a logged in user
-    title:			String;			// rule: ["required"]},
+    @property({rule: ['required']})
+    title:			string;
+
+    @property({})
     description:	string;			// {type: String},
 
-    // Secure properties only set on the server
-    created:            Date;		//{toServer: false, type: Date},
+    @property({toServer: false})
+    created:            Date;
+
+    @property({toServer: false, fetch: true})
     creator:            Person;		//{toServer: false, type: Person, fetch: true},
+
+    @property({toServer: false, fetch: true})
     project:            Project;	//{toServer: false, type: Project, fetch: true},
 
+    @property({of: TicketItem})
     ticketItems: 	Array<TicketItem> = [];		//, value: []},
 
     constructor (title : string, description : string, projectName? : string, projectDescription? : string) {
@@ -23,14 +56,11 @@ export class Ticket {
             this.project = new Project(projectName, projectDescription);
     };
 
+    @remote({on: "server",
+        validate: function () {
+            return this.validate();
+        },})
     addComment (comment) {
-        /*
-         on: "server",
-         validate: function () {
-         return this.validate();
-         },
-         body: function (comment
-         */
         comment = new TicketItemComment(this, comment);
         this.ticketItems.push(comment);
         return comment;
