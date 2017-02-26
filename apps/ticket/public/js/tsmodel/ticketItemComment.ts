@@ -1,14 +1,19 @@
+import {Supertype, supertypeClass, property, remote} from 'supertype';
+import {Ticket} from './ticket';
 import {TicketItem} from './ticketItem';
 import {TicketItemAttachment} from './ticketItemAttachment';
 
-export class TicketItemComment extends TicketItem {
+@supertypeClass
+export class TicketItemComment { //  extends TicketItem
 
+    @property()
     text:               string;			//, rule: ['required'], value: null},
+    @property({type: TicketItemAttachment})
     attachments:        Array<TicketItemAttachment>		//, value: []},
 
     // Only called on the server
-    constructor (ticket, text) {
-        super(ticket);
+    constructor (ticket: Ticket, text) {
+        // super(ticket);
         this.text = text;
     };
 

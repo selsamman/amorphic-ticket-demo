@@ -1,40 +1,25 @@
+import {Supertype, supertypeClass, property, remote} from 'supertype';
 import {Person} from './person';
 import {Project} from './project';
 import {TicketItem} from './ticketItem';
 import {TicketItemComment} from './ticketItemComment';
-import "reflect-metadata";
+// import "reflect-metadata";
 
-function remote (props: Object) {
-    return function (target: any, targetKey: string, descriptor: PropertyDescriptor) {
-        target.__amorphicprops__ = target.__amorphicprops__ || {}
-        target.__amorphicprops__[targetKey] = props || {};
-        // I can modify the property descriptor here to inject remote proxy
-    }
-}
+// function remote (props: Object) {
+//     return function (target: any, targetKey: string, descriptor: PropertyDescriptor) {
+//         target.__amorphicprops__ = target.__amorphicprops__ || {}
+//         target.__amorphicprops__[targetKey] = props || {};
+//         // I can modify the property descriptor here to inject remote proxy
+//     }
+// }
 
-function property(props: Object) {
-    return function (target, targetKey) {
-        if (props['of'] )
-            props['of'] = props['of'].toString().match(new RegExp(/.*function (.*)\(/))[1]
-        target.__amorphicprops__ = target.__amorphicprops__ || {}
-        target.__amorphicprops__[targetKey] = props || {};
-        target.__amorphicprops__[targetKey].type  = Reflect.getMetadata('design:type', target, targetKey).toString().match(new RegExp(/.*function (.*)\(/))[1];
-    };
-}
-
-function amorphic(target: Function) // The class the decorator is declared on
-{
-    console.log("@amorphic generating: ", target.toString().match(new RegExp(/.*function (.*)\(/))[1] + ":" +
-        JSON.stringify(target.prototype.__amorphicprops__, null, 4))
-}
-
-@amorphic
+@supertypeClass
 export class Ticket {
 
     @property({rule: ['required']})
     title:			string;
 
-    @property({})
+    @property()
     description:	string;			// {type: String},
 
     @property({toServer: false})
@@ -56,10 +41,12 @@ export class Ticket {
             this.project = new Project(projectName, projectDescription);
     };
 
-    @remote({on: "server",
+    @remote({
+        on: "server",
         validate: function () {
             return this.validate();
-        },})
+        }
+    })
     addComment (comment) {
         comment = new TicketItemComment(this, comment);
         this.ticketItems.push(comment);

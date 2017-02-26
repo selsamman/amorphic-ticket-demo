@@ -13,7 +13,8 @@
     "amorphic-mandrill": "x",
     "amorphic-userman": "x",
     "q": "0.9.x",
-    "reflect-metadata": "^0.1.9"
+    "reflect-metadata": "^0.1.9",
+    "supertype": "https://github.com/selsamman/supertype.git#58a02e4"
   },
   "devDependencies": {
     "@types/chai": "^3.4.34",
