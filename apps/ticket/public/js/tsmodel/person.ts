@@ -1,26 +1,28 @@
-import {Supertype, supertypeClass, property} from 'supertype';
+import {Supertype, supertypeClass, property} from 'amorphic';
 import {TicketItem} from './ticketItem';
-
+console.log("Compiling Person");
 @supertypeClass
-export class Person {
+export class Person extends Supertype {
 
-    // Name
-    @property()
-    firstName:          string = "";     //value: "", length: 40, rule: ["name", "required"]},
-    @property()
-    middleName:         string = "";     // value: "", length: 40, rule: "name"},
-    @property()
+    @property({length: 40, rule: ["name", "required"]})
+    firstName:          string = "";
+
+    @property({length: 40, rule: ["name", "required"]})
+    middleName:         string = "";
+
+    @property({length: 40, rule: ["name", "required"]})
     lastName:           string = "";     //value: "", length: 40, rule: ["name", "required"]},
 
     // Secure data elements never transmitted in both directions
-    @property()
-    email:              string = "";     //{toServer: false, type: String, value: "", length: 200},
+    @property({toServer: false, length: 200})
+    email:              string = "";
 
     // Relationships
     @property({type: TicketItem})
-    ticketItems:        Array<TicketItem> = [];  //  {type: Array, of: TicketItem, value: {}},
+    ticketItems:        Array<TicketItem> = [];
 
     constructor  (email: string, first: string, middle: string, last: string) {
+        super();
         this.firstName = first || "";
         this.middleName = middle || "";
         this.lastName = last || ""
@@ -30,17 +32,17 @@ export class Person {
     getFullName () {
         return this.firstName + (this.middleName ? " " + this.middleName  + " ": " ") + this.lastName;
     };
-/*
+
     save () {
         return this.persistSave();
     };
 
     remove () {
-        if (this.getSecurityContext().isAdmin())
+        //if (this.getSecurityContext().isAdmin())
             return this.persistDelete();
-        else
-            return Q(false);
+        //else
+        //    return Q(false);
     };
-*/
+
 };
 

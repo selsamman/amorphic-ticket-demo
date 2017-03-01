@@ -1,23 +1,28 @@
-import {Supertype, supertypeClass, property} from 'supertype';
+import {Supertype, supertypeClass, property} from 'amorphic';
 import {Person} from './person';
 import {Ticket} from './ticket';
-
+console.log("Compiling Project");
 @supertypeClass
-export class Project {
+export class Project extends Supertype {
 
 	// Name
-	@property()
-	name:               string; 			// length: 40, rule: ["name", "required"]},
-	@property()
+	@property({length: 40, rule: ["name", "required"]})
+	name:               string;
+
+	@property({rule: ["datetime"]})
 	description:        string;
+
 	@property()
-	created:            Date;				// rule: ["datetime"]},
-	@property()
-	creator:            Person;				// {toServer: false, fetch: true},
-	@property({type: Ticket})
-	tickets:            Array<Ticket> = []		//{toServer: false, type: Array, of: ProjectRole, value: [], fetch: true},
+	created:            Date;
+
+	@property({oServer: false, fetch: true})
+	creator:            Person;
+
+	@property({getType: ()=>{return Ticket}, fetch: true})
+	tickets:            Array<Ticket> = [];
 
 	constructor (name: string, description: string) {
+		super();
 		this.name = name;
 		this.description = description;
 	};
@@ -31,16 +36,20 @@ export class Project {
 	validateServerCall () {
 		return this.getSecurityContext().principal ? true : false;
 	};
-	save (authenticatedPerson) {
+*/
+	save (authenticatedPerson?) {
+		/*
 		if (!this.creator) {
 			this.creator = this.getSecurityContext().principal;
 			this.created = new Date();
 		}
+		*/
+		this.creator = authenticatedPerson;
 		return this.persistSave();
 	}
 
-	remove: function () {
+	remove () {
 		return this.persistDelete();
 	}
-*/
+
 };

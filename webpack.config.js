@@ -1,5 +1,6 @@
+var path = require('path');
 module.exports = {
-    entry: './apps/ticket/public/js/tsmodel/index.ts',
+    entry: './apps/ticket/public/js/index.ts',
     output: {
         filename: '/bundle.js',
         path: '/'
@@ -24,7 +25,10 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: [".tsx", ".ts", ".js"]
+        extensions: [".tsx", ".ts", ".js"],
+        alias: {
+            amorphic: path.resolve(__dirname, './node_modules/semotus/index.js')
+        }
     },
-    devtool: 'inline-source-map',
+    devtool: 'inline-source-map'
 };

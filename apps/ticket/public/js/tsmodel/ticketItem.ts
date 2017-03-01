@@ -1,21 +1,25 @@
-import {Supertype, supertypeClass, property, remote} from 'supertype';
+import {Supertype, supertypeClass, property, remote} from 'amorphic';
 import {Person} from './person';
 import {Ticket} from './ticket';
 import {TicketItemComment} from './ticketItemComment';
+console.log("Compiling TicketItem");
 
 @supertypeClass
-export class TicketItem {
+export class TicketItem extends Supertype {
 
     // Secure properties can only be set on the server
-    @property()
+    @property({getType: ()=>{return Person}})
     creator:            Person; 		//{toServer: false, type: Person, fetch: true},
+
     @property()
     created:            Date;			//{toServer: false, type: Date},
-    @property()
+
+    @property({getType: ()=>{return Ticket}})
     ticket:             Ticket;			//{toServer: false, type: Ticket},
 
     // Only called on the server
     constructor (ticket: Ticket) {
+        super()
         this.ticket = ticket;
         //this.creator = this.getSecurityContext().principal;
         this.created = new Date();
@@ -23,5 +27,9 @@ export class TicketItem {
 
     isComment () {
         return this instanceof TicketItemComment;
+    }
+
+    remove () {
+        return this.persistDelete();
     }
 };

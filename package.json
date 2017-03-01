@@ -9,22 +9,25 @@
     "start": "app.js"
   },
   "dependencies": {
-    "amorphic": "2.0.*",
+    "amorphic": "https://github.com/selsamman/amorphic.git#a491718",
     "amorphic-mandrill": "x",
     "amorphic-userman": "x",
-    "q": "0.9.x",
+    "underscore": "1.x",
+    "q": "*",
     "reflect-metadata": "^0.1.9",
-    "supertype": "https://github.com/selsamman/supertype.git#58a02e4"
+    "@types/q": "*",
+    "@types/underscore": "*",
+    "@types/node": "^7.0.5"
   },
   "devDependencies": {
     "@types/chai": "^3.4.34",
     "@types/mocha": "^2.2.39",
-    "@types/node": "^7.0.5",
     "chai": "1.x",
     "gulp": "^3.9.1",
     "mocha": "1.x",
     "source-map-loader": "^0.1.6",
     "ts-loader": "^2.0.0",
+    "ts-node": "*",
     "typescript": "^2.1.6",
     "webpack": "^2.2.1",
     "webpack-stream": "^3.2.0"

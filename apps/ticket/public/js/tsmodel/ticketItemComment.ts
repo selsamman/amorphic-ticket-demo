@@ -1,19 +1,21 @@
-import {Supertype, supertypeClass, property, remote} from 'supertype';
+import {Supertype, supertypeClass, property, remote} from 'amorphic';
 import {Ticket} from './ticket';
 import {TicketItem} from './ticketItem';
 import {TicketItemAttachment} from './ticketItemAttachment';
+console.log("Compiling TicketItemComment");
 
 @supertypeClass
-export class TicketItemComment { //  extends TicketItem
+export class TicketItemComment extends TicketItem { //  extends TicketItem
 
-    @property()
-    text:               string;			//, rule: ['required'], value: null},
+    @property({rule: ['required']})
+    text:               string;
+
     @property({type: TicketItemAttachment})
     attachments:        Array<TicketItemAttachment>		//, value: []},
 
     // Only called on the server
     constructor (ticket: Ticket, text) {
-        // super(ticket);
+        super(ticket);
         this.text = text;
     };
 
@@ -23,11 +25,10 @@ export class TicketItemComment { //  extends TicketItem
         return attachment;
     };
 
-    /*
+
      remove () {
-     for (var ix = 0;ix < this.attachments.length;++ix)
-     this.attachments[ix].persistDelete();
-     this.persistDelete();
+         for (var ix = 0;ix < this.attachments.length;++ix)
+             this.attachments[ix].persistDelete();
+         this.persistDelete();
      };
-     */
 };

@@ -1,100 +1,66 @@
-import {Supertype, supertypeClass, property, remote} from 'supertype';
+import {Supertype, supertypeClass, property, remote} from 'amorphic';
 import {Person} from './person';
 import {Project} from './project';
-import {TicketItem} from './ticketItem';
 import {TicketItemComment} from './ticketItemComment';
-// import "reflect-metadata";
-
-// function remote (props: Object) {
-//     return function (target: any, targetKey: string, descriptor: PropertyDescriptor) {
-//         target.__amorphicprops__ = target.__amorphicprops__ || {}
-//         target.__amorphicprops__[targetKey] = props || {};
-//         // I can modify the property descriptor here to inject remote proxy
-//     }
-// }
-
+import {TicketItem} from './ticketItem';
+console.log("Compiling Ticket");
 @supertypeClass
-export class Ticket {
+export class Ticket  extends Supertype{
 
     @property({rule: ['required']})
     title:			string;
 
     @property()
-    description:	string;			// {type: String},
+    description:	string;
 
     @property({toServer: false})
     created:            Date;
 
     @property({toServer: false, fetch: true})
-    creator:            Person;		//{toServer: false, type: Person, fetch: true},
+    creator:            Person;
 
     @property({toServer: false, fetch: true})
-    project:            Project;	//{toServer: false, type: Project, fetch: true},
+    project:            Project;
 
-    @property({of: TicketItem})
-    ticketItems: 	Array<TicketItem> = [];		//, value: []},
+    @property({type: TicketItem})
+    ticketItems: 	Array<TicketItem> = [];
 
-    constructor (title : string, description : string, projectName? : string, projectDescription? : string) {
+    constructor (title? : string, description? : string, projectName? : string, projectDescription? : string) {
+        super();
         this.title = title || null;
         this.description = description || null;
         if (projectName)
             this.project = new Project(projectName, projectDescription);
     };
 
-    @remote({
-        on: "server",
-        validate: function () {
-            return this.validate();
-        }
-    })
+    @remote({validate: function () {return this.validate();}})
     addComment (comment) {
         comment = new TicketItemComment(this, comment);
         this.ticketItems.push(comment);
         return comment;
     }
 
-    /*
-     titleSet (value) {				// {on: "server", body: function(value)
-     if (value.match(/Sam/i) && value.match(/sucks|poor|untidy|bug|bugs|buggy|crap/i))
-     throw "Don't disparage Sam";
-     this.title = value;
-     };
-     validateServerCall () {
-     return this.getSecurityContext() ? true : false;
-     };
+    @remote()
+    remove () {		//  {on: "server", body: function ()
+        for (var ix = 0; ix < this.ticketItems.length; ++ix)
+            this.ticketItems[ix].remove();
+        if (this.project) {
+            for (var ix = 0; ix < this.project.tickets.length; ++ix)
+                if (this.project.tickets[ix] == this)
+                    this.project.tickets.splice(ix, 1);
+            this.project.save();
+        }
+        return this.persistDelete();
+    };
 
-     projectSet (project) {	// {on: "server", body: function(project)
-     return Project.getFromPersistWithId(project._id).then( function(project) {
-     this.project = project || null;
-     return project;
-     }.bind(this));
-     };
-
-     remove () {		//  {on: "server", body: function ()
-     for (var ix = 0; ix < this.ticketItems; ++ix)
-     this.ticketItems[ix].remove();
-     if (this.project) {
-     for (var ix = 0; ix < this.project.tickets.length; ++ix)
-     if (this.project.tickets[ix] == this)
-     this.project.splice(ix, 1);
-     this.project.save();
-     }
-     return this.persistDelete();
-     };
-
-     save () {
-
-     on: "server",
-     validate: function () {return this.validate()},
-     body: function ()
-
-     if (!this.created)
-     this.created = new Date();
-
+    @remote({validate: function () {return this.validate()}})
+    save () {
+        if (!this.created)
+            this.created = new Date();
+/*
      if (!this.creator)
      this.creator = this.getSecurityContext().principal;
-
-     return this.persistSave();
-     }
-     */
+*/
+        return this.persistSave();
+    }
 };

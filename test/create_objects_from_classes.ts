@@ -1,7 +1,9 @@
+import { Controller } from '../apps/ticket/public/js/controller';
 import { Ticket } from '../apps/ticket/public/js/tsmodel/ticket';
 import { Project } from '../apps/ticket/public/js/tsmodel/project';
 import { expect } from 'chai';
 import * as mocha from 'mocha';
+
 
 describe('Create a Ticket', () => {
     it('Named Correctly', () => {
@@ -19,4 +21,8 @@ describe('Create a Ticket', () => {
         expect(project.tickets.length).to.equal(1);
         expect(project.tickets[0].project).to.equal(project);
     });
+    it('Can create the controller', () => {
+        var controller = new Controller();
+    });
+
 });

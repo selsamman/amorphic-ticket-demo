@@ -2,19 +2,5 @@
 	"dbPath":       "mongodb://localhost:27017/",
 	"dbName":       "ticket",
     "createControllerFor": "#",
-	"ver":          "0",
-    "modules":      {
-        "userman":  {
-            "require": "amorphic-userman",
-            "controller": {"require": "controller", "template": "Controller", "fields":{"principal": "loggedInPerson"}},
-            "principal": {"require" : "person", "template": "Person"},
-            "validateEmail": true
-        },
-        "mandrill": {
-            "require" : "amorphic-mandrill",
-            "controller": {"require": "controller", "template": "Controller"},
-            "senderEmail" : "sams@elsamman.com",
-            "senderName": "Amorphic Team"
-        }
-    }
+	"ver":          "0"
 }
