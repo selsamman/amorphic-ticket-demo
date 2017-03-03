@@ -15,8 +15,11 @@ export class Project extends Supertype {
 	@property()
 	created:            Date;
 
-	@property({oServer: false, fetch: true})
+	@property({toServer: false, fetch: true})
 	creator:            Person;
+
+	@property({toServer: false, fetch: true})
+	owner:            Person;
 
 	@property({getType: ()=>{return Ticket}, fetch: true})
 	tickets:            Array<Ticket> = [];
