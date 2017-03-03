@@ -28,6 +28,9 @@
             "ticketItem":         {"id": "ticket_item_id"}
         }
     },
+    "Principal": {
+        "documentOf": "person"
+    },
     "Person": {
         "documentOf": "person",
         "children": {

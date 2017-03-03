@@ -9,7 +9,7 @@
     "start": "app.js"
   },
   "dependencies": {
-    "amorphic": "https://github.com/selsamman/amorphic.git#a491718",
+    "amorphic": "https://github.com/selsamman/amorphic.git#6cc00ea",
     "amorphic-mandrill": "x",
     "amorphic-userman": "x",
     "underscore": "1.x",

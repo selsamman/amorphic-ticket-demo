@@ -1,8 +1,10 @@
 import {Supertype, supertypeClass, property} from 'amorphic';
 import {TicketItem} from './ticketItem';
+import {Principal} from "./Principal";
 console.log("Compiling Person");
+
 @supertypeClass
-export class Person extends Supertype {
+export class Person extends Principal {
 
     @property({length: 40, rule: ["name", "required"]})
     firstName:          string = "";

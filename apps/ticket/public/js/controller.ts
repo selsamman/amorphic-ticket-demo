@@ -12,6 +12,7 @@ var forceImport = TicketItemComment;
 declare var AmorphicRouter : any;
 declare var ticketRoutes : any;
 
+@supertypeClass
 export class Controller extends BaseController {
 
      // Global properties
@@ -48,6 +49,9 @@ export class Controller extends BaseController {
 
     @property()
     person: Person;
+
+    @property()
+    loggedInPerson: Person;
 
     @property({type: Person, autoFetch: true})
     people: Array<Person>;
@@ -231,6 +235,9 @@ export class Controller extends BaseController {
                 this.setPage('home');
             }
         }.bind(this));
+    }
+    registerPrincipal(principal) {
+        this.loggedInPerson = principal;
     }
 
     logout ()

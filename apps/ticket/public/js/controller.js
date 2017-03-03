@@ -1,14 +1,9 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18,7 +13,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 var amorphic_1 = require("amorphic");
 var baseController_1 = require("./baseController");
 var ticketItemComment_1 = require("./tsmodel/ticketItemComment");
@@ -198,6 +192,9 @@ var Controller = (function (_super) {
             }
         }.bind(this));
     };
+    Controller.prototype.registerPrincipal = function (principal) {
+        this.loggedInPerson = principal;
+    };
     Controller.prototype.logout = function () {
         // Ideally for security purposes and to prevent leaks there should be a controller reset capability
         this.people = null;
@@ -283,6 +280,10 @@ __decorate([
     __metadata("design:type", person_1.Person)
 ], Controller.prototype, "person", void 0);
 __decorate([
+    amorphic_1.property(),
+    __metadata("design:type", person_1.Person)
+], Controller.prototype, "loggedInPerson", void 0);
+__decorate([
     amorphic_1.property({ type: person_1.Person, autoFetch: true }),
     __metadata("design:type", Array)
 ], Controller.prototype, "people", void 0);
@@ -352,5 +353,8 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], Controller.prototype, "setPage", null);
+Controller = __decorate([
+    amorphic_1.supertypeClass
+], Controller);
 exports.Controller = Controller;
 //# sourceMappingURL=controller.js.map
