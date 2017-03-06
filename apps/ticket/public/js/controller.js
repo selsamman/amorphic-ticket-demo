@@ -36,6 +36,13 @@ var Controller = (function (_super) {
         _this.file = '';
         _this.error = '';
         _this.status = '';
+        // References to the model
+        _this.ticket = null; // unlike with supertype properties are not 'ownProperty'
+        _this.person = null;
+        _this.loggedInPerson = null;
+        _this.project = null;
+        // Temporary fields
+        _this.comment = ''; // When adding a comment to a ticket
         return _this;
         /**
          * Security check on remote calls is execute from semotus before executing a call on the server
@@ -85,6 +92,12 @@ var Controller = (function (_super) {
         this.route.private.ticket();
     };
     ;
+    Controller.prototype.addComment = function () {
+        return this.ticket.addComment(this.comment, this.loggedInPerson).persistSave()
+            .then(function () {
+            this.comment = '';
+        }.bind(this));
+    };
     // Ask the ticket to save itself and update our list of tickets
     Controller.prototype.saveTicket = function () {
         if (this.ticket)
@@ -272,6 +285,10 @@ __decorate([
     __metadata("design:type", String)
 ], Controller.prototype, "status", void 0);
 __decorate([
+    amorphic_1.property(),
+    __metadata("design:type", ticket_1.Ticket)
+], Controller.prototype, "ticket", void 0);
+__decorate([
     amorphic_1.property({ autoFetch: true, type: ticket_1.Ticket }),
     __metadata("design:type", Array)
 ], Controller.prototype, "tickets", void 0);
@@ -317,6 +334,12 @@ __decorate([
     amorphic_1.property(),
     __metadata("design:type", String)
 ], Controller.prototype, "comment", void 0);
+__decorate([
+    amorphic_1.remote(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], Controller.prototype, "addComment", null);
 __decorate([
     amorphic_1.remote({ validate: function () { return this.validate(); } }),
     __metadata("design:type", Function),

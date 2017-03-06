@@ -34,7 +34,8 @@ export class Controller extends BaseController {
 
     // References to the model
 
-    ticket: Ticket;
+    @property()
+    ticket: Ticket = null;  // unlike with supertype properties are not 'ownProperty'
 
     @property({autoFetch: true, type: Ticket})
     tickets: Array<Ticket>;
@@ -48,10 +49,10 @@ export class Controller extends BaseController {
     };
 
     @property()
-    person: Person;
+    person: Person = null;
 
     @property()
-    loggedInPerson: Person;
+    loggedInPerson: Person = null;
 
     @property({type: Person, autoFetch: true})
     people: Array<Person>;
@@ -65,7 +66,7 @@ export class Controller extends BaseController {
     };
 
     @property()
-    project: Project;
+    project: Project = null;
 
     @property({type: Project, autoFetch: true})
     projects: Array<Project>;
@@ -80,7 +81,7 @@ export class Controller extends BaseController {
 
     // Temporary fields
     @property()
-    comment:  string;                     // When adding a comment to a ticket
+    comment:  string = '';                     // When adding a comment to a ticket
 
     /*
      * -------  Ticket functions ----------------------------------------------------------------
@@ -96,6 +97,14 @@ export class Controller extends BaseController {
         }
         this.route.private.ticket();
     };
+
+    @remote()
+    addComment () {
+        return this.ticket.addComment(this.comment, this.loggedInPerson).persistSave()
+            .then(function () {
+                this.comment = '';
+            }.bind(this));
+    }
 
     // Ask the ticket to save itself and update our list of tickets
     @remote({validate: function () {return this.validate()}})

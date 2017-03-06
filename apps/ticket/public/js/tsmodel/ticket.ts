@@ -22,7 +22,7 @@ export class Ticket  extends Supertype{
     @property({toServer: false, fetch: true})
     project:            Project;
 
-    @property({type: TicketItem})
+    @property({type: TicketItem, fetch: true})
     ticketItems: 	Array<TicketItem> = [];
 
     constructor (title? : string, description? : string, projectName? : string, projectDescription? : string) {
@@ -34,8 +34,8 @@ export class Ticket  extends Supertype{
     };
 
     @remote({validate: function () {return this.validate();}})
-    addComment (comment) {
-        comment = new TicketItemComment(this, comment);
+    addComment (comment, creator?) : TicketItem {
+        comment = new TicketItemComment(this, comment, creator);
         this.ticketItems.push(comment);
         return comment;
     }

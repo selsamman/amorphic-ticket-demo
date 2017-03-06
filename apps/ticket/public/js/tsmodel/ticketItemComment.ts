@@ -14,8 +14,8 @@ export class TicketItemComment extends TicketItem { //  extends TicketItem
     attachments:        Array<TicketItemAttachment>		//, value: []},
 
     // Only called on the server
-    constructor (ticket: Ticket, text) {
-        super(ticket);
+    constructor (ticket: Ticket, text, creator?) {
+        super(ticket, creator);
         this.text = text;
     };
 

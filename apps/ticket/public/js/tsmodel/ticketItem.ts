@@ -18,10 +18,10 @@ export class TicketItem extends Supertype {
     ticket:             Ticket;			//{toServer: false, type: Ticket},
 
     // Only called on the server
-    constructor (ticket: Ticket) {
+    constructor (ticket: Ticket, creator? : Person) {
         super()
         this.ticket = ticket;
-        //this.creator = this.getSecurityContext().principal;
+        this.creator = creator;
         this.created = new Date();
     }
 
