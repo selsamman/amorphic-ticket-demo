@@ -2,5 +2,11 @@
 	"dbPath":       "mongodb://localhost:27017/",
 	"dbName":       "ticket",
     "createControllerFor": "#",
-	"ver":          "0"
+	"ver":          "0",
+	"userman":  {
+		"require": "amorphic-userman",
+		"controller": {"require": "controller", "template": "Controller", "fields":{"principal": "loggedInPerson"}},
+		"principal": {"require" : "person", "template": "Person"},
+		"validateEmail": true
+	}
 }

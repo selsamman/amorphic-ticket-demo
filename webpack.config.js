@@ -1,4 +1,5 @@
 var path = require('path');
+var nodeExternals = require('webpack-node-externals');
 module.exports = {
     entry: './apps/ticket/public/js/index.ts',
     output: {
@@ -10,7 +11,6 @@ module.exports = {
             {
                 test: /\.tsx?$/,
                 loader: 'ts-loader',
-                exclude: /node_modules/,
             },
             {
                 enforce: 'pre',

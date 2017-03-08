@@ -28,7 +28,7 @@
             "ticketItem":         {"id": "ticket_item_id"}
         }
     },
-    "Principal": {
+    "AuthenticatedPrincipal": {
         "documentOf": "person"
     },
     "Person": {

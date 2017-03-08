@@ -1,8 +1,20 @@
 import {Supertype, supertypeClass, property, remote} from 'amorphic';
-import {AuthenticatingController} from "./tsmodel/AuthenticatingController";
+import {AuthenticatingController, AuthenticatedPrincipal} from "amorphic-userman";
+import {Person} from "./tsmodel/person";
 
 @supertypeClass
 export class BaseController extends AuthenticatingController {
+
+	getPrincipal () : AuthenticatedPrincipal {
+		return this.loggedInPerson;
+	}
+	setPrincipal(principal) {
+		this.loggedInPerson = principal
+	}
+	sendEmail (slug, email, contents) {
+		console.log('simulating email ' + JSON.stringify(arguments));
+	}
+	loggedInPerson: Person;
 
 	errorCount:     number = 0;
 	value:			any;

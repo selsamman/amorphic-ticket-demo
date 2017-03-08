@@ -1,10 +1,10 @@
 import {Supertype, supertypeClass, property} from 'amorphic';
 import {TicketItem} from './ticketItem';
-import {Principal} from "./Principal";
 console.log("Compiling Person");
+import {AuthenticatedPrincipal} from "amorphic-userman";
 
 @supertypeClass
-export class Person extends Principal {
+export class Person extends AuthenticatedPrincipal {
 
     @property({length: 40, rule: ["name", "required"]})
     firstName:          string = "";

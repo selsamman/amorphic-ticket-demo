@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var amorphic_1 = require("amorphic");
-var AuthenticatingController_1 = require("./tsmodel/AuthenticatingController");
+var amorphic_userman_1 = require("amorphic-userman");
 var BaseController = (function (_super) {
     __extends(BaseController, _super);
     function BaseController() {
@@ -25,6 +25,15 @@ var BaseController = (function (_super) {
         _this.errorCount = 0;
         return _this;
     }
+    BaseController.prototype.getPrincipal = function () {
+        return this.loggedInPerson;
+    };
+    BaseController.prototype.setPrincipal = function (principal) {
+        this.loggedInPerson = principal;
+    };
+    BaseController.prototype.sendEmail = function (slug, email, contents) {
+        console.log('simulating email ' + JSON.stringify(arguments));
+    };
     // Validators
     BaseController.prototype.isName = function () { this.mustNotMatch("[^0-9A-Za-z \'\-]", "name"); };
     ;
@@ -467,7 +476,7 @@ var BaseController = (function (_super) {
         head.appendChild(script);
     };
     return BaseController;
-}(AuthenticatingController_1.AuthenticatingController));
+}(amorphic_userman_1.AuthenticatingController));
 BaseController = __decorate([
     amorphic_1.supertypeClass
 ], BaseController);
