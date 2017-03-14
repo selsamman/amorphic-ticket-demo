@@ -1,14 +1,19 @@
-import {Supertype, supertypeClass, property, remote} from 'amorphic';
+import {Supertype, supertypeClass, property, remote, Remoteable, Persistable} from 'amorphic';
 import {TicketItem} from './ticketItem';
 console.log("Compiling TicketItemAttachment");
+
 @supertypeClass
-export class TicketItemAttachment extends Supertype {	// = objectTemplate.create("TicketItemAttachment",
+export class TicketItemAttachment extends Remoteable(Persistable(Supertype)) {
+
     @property()
     data:               string;
+
     @property()
     name:               string;
+
     @property()
     created:            Date;
+
     @property()
     ticketItem:         TicketItem;
 

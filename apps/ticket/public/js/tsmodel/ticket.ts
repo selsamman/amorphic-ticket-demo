@@ -1,23 +1,18 @@
-import {Supertype, supertypeClass, property, remote} from 'amorphic';
+import {Supertype, supertypeClass, property, remote, Remoteable, Persistable} from 'amorphic';
 import {Person} from './person';
 import {Project} from './project';
 import {TicketItemComment} from './ticketItemComment';
 import {TicketItem} from './ticketItem';
+import {Created, Constructable} from './created'
 console.log("Compiling Ticket");
 @supertypeClass
-export class Ticket  extends Supertype{
+export class Ticket  extends Created(Remoteable(Persistable(Supertype))){
 
     @property({rule: ['required']})
     title:			string;
 
     @property()
     description:	string;
-
-    @property({toServer: false})
-    created:            Date;
-
-    @property({toServer: false, fetch: true})
-    creator:            Person;
 
     @property({toServer: false, fetch: true})
     project:            Project;
@@ -28,6 +23,7 @@ export class Ticket  extends Supertype{
     constructor (title? : string, description? : string, projectName? : string, projectDescription? : string) {
         super();
         this.title = title || null;
+        this.created = new Date();
         this.description = description || null;
         if (projectName)
             this.project = new Project(projectName, projectDescription);

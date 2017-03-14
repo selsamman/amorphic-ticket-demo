@@ -1,4 +1,4 @@
-import {Supertype, supertypeClass, property} from 'amorphic';
+import {Supertype, supertypeClass, property, Remoteable, Persistable} from 'amorphic';
 import {TicketItem} from './ticketItem';
 console.log("Compiling Person");
 import {AuthenticatedPrincipal} from "amorphic-userman";
@@ -36,7 +36,7 @@ export class Person extends AuthenticatedPrincipal {
     };
 
     save () {
-        return this.persistSave();
+        return this.persistorSave();
     };
 
     remove () {

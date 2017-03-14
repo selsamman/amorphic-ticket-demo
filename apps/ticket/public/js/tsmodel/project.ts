@@ -1,9 +1,9 @@
-import {Supertype, supertypeClass, property} from 'amorphic';
+import {Supertype, supertypeClass, property, Remoteable, Persistable} from 'amorphic';
 import {Person} from './person';
 import {Ticket} from './ticket';
 console.log("Compiling Project");
 @supertypeClass
-export class Project extends Supertype {
+export class Project extends Remoteable(Persistable(Supertype)) {
 
 	// Name
 	@property({length: 40, rule: ["name", "required"]})
@@ -52,7 +52,7 @@ export class Project extends Supertype {
 	}
 
 	remove () {
-		return this.persistDelete();
+		return this.persistorDelete();
 	}
 
 };

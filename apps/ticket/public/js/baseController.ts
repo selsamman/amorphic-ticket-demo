@@ -1,7 +1,7 @@
 import {Supertype, supertypeClass, property, remote} from 'amorphic';
 import {AuthenticatingController, AuthenticatedPrincipal} from "amorphic-userman";
 import {Person} from "./tsmodel/person";
-
+declare var ActiveXObject : any;
 @supertypeClass
 export class BaseController extends AuthenticatingController {
 
