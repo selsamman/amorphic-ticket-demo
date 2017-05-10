@@ -1,6 +1,7 @@
 import {Supertype, supertypeClass, Persistable, property, remote} from 'amorphic';
 import { TicketItemComment } from '../../common/js/ticketItemComment';
 import {Ticket} from '../../common/js/ticket';
+import {List} from '../../common/js/static';
 import * as Q from 'Q';
 import * as _ from 'underscore';
 import {Person} from "../../common/js/person";
@@ -12,6 +13,7 @@ var forceImport = TicketItemComment;
 export class Controller extends Persistable(Supertype) {
     serverInit () {
         this.amorphic.logger.info({userConfig: this.amorphic['config'].userConfig}, 'Damon Up and Running ');
+        this.amorphic.logger.info({templateName: List.template.amorphicClassName}, 'Look ma a static');
         setTimeout(() => this.tickTock(), 5000);
 
     }
