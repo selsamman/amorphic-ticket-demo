@@ -58,6 +58,7 @@ var Controller = (function (_super) {
          */
     }
     Controller.prototype.ticketsFetch = function () {
+        this.amorphic.logger.info({}, 'fetching tickets');
         this['ticketsPersistor'] = { isFetching: false, isFetched: true };
         return ticket_1.Ticket.getFromPersistWithQuery({}).then(function (tickets) {
             this.tickets = tickets;
@@ -83,6 +84,7 @@ var Controller = (function (_super) {
      */
     // Create a new ticket and make it current
     Controller.prototype.newTicket = function () {
+        this.amorphic.logger.error({}, 'creating new ticket');
         if (!this.ticket || this.ticket.created) {
             this.ticket = new ticket_1.Ticket();
             if (_.indexOf(this.tickets, this.ticket) < 0)

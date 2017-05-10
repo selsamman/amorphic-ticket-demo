@@ -15,7 +15,7 @@ export class Ticket  extends Created(Remoteable(Persistable(Supertype))){
     description:	string;
 
     @property({toServer: false, fetch: true})
-    project:            Project;
+    project:            Project = null;
 
     @property({type: TicketItem, fetch: true})
     ticketItems: 	Array<TicketItem> = [];
@@ -41,10 +41,12 @@ export class Ticket  extends Created(Remoteable(Persistable(Supertype))){
         for (var ix = 0; ix < this.ticketItems.length; ++ix)
             this.ticketItems[ix].remove();
         if (this.project) {
+            this.amorphic.beginDefaultTransaction();
             for (var ix = 0; ix < this.project.tickets.length; ++ix)
                 if (this.project.tickets[ix] == this)
                     this.project.tickets.splice(ix, 1);
-            this.project.save();
+            this.project.persistorSave();
+            return this.amorphic.endTransaction();
         }
         return this.persistDelete();
     };

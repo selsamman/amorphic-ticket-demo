@@ -42,6 +42,7 @@ export class Controller extends BaseController {
 
     @remote()
     ticketsFetch () {
+        this.amorphic.logger.info({}, 'fetching tickets');
         this['ticketsPersistor'] = {isFetching: false, isFetched: true};
         return Ticket.getFromPersistWithQuery({}).then(function (tickets) {
             this.tickets = tickets;
@@ -89,6 +90,7 @@ export class Controller extends BaseController {
 
     // Create a new ticket and make it current
     newTicket () {
+        this.amorphic.logger.error({}, 'creating new ticket');
         if (!this.ticket || this.ticket.created) {
             this.ticket = new Ticket();
             if (_.indexOf(this.tickets, this.ticket) < 0) // Add to list
