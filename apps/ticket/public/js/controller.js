@@ -21,11 +21,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var amorphic_1 = require("amorphic");
 var baseController_1 = require("./baseController");
-var ticketItemComment_1 = require("./tsmodel/ticketItemComment");
-var ticket_1 = require("./tsmodel/ticket");
+var ticketItemComment_1 = require("../../../common/js/ticketItemComment");
+var ticket_1 = require("../../../common/js/ticket");
 var _ = require("underscore");
-var person_1 = require("./tsmodel/person");
-var project_1 = require("./tsmodel/project");
+var person_1 = require("../../../common/js/person");
+var project_1 = require("../../../common/js/project");
 var forceImport = ticketItemComment_1.TicketItemComment;
 var Controller = (function (_super) {
     __extends(Controller, _super);

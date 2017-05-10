@@ -1,6 +1,6 @@
 import { Controller } from '../apps/ticket/public/js/controller';
 import { Ticket } from '../apps/ticket/public/js/tsmodel/ticket';
-import { Project } from '../apps/ticket/public/js/tsmodel/project';
+import { Project } from '../apps/common/js/project';
 import { expect } from 'chai';
 import * as mocha from 'mocha';
 

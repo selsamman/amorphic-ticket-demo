@@ -11,7 +11,7 @@ import Promise = require('bluebird');
 import { expect } from 'chai';
 import * as mocha from 'mocha';
 import * as _ from 'underscore';
-import {Ticket} from "../js/tsmodel/ticket";
+import {Ticket} from "../../../common/js/ticket";
 
 describe('Ticket', function() {
 

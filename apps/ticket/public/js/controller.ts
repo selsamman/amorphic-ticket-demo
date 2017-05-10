@@ -1,11 +1,11 @@
 import {Supertype, supertypeClass, property, remote} from 'amorphic';
 import {BaseController} from './baseController';
-import { TicketItemComment } from './tsmodel/ticketItemComment';
-import {Ticket} from './tsmodel/ticket';
+import { TicketItemComment } from '../../../common/js/ticketItemComment';
+import {Ticket} from '../../../common/js/ticket';
 import * as Q from 'Q';
 import * as _ from 'underscore';
-import {Person} from "./tsmodel/person";
-import {Project} from "./tsmodel/project";
+import {Person} from "../../../common/js/person";
+import {Project} from "../../../common/js/project";
 
 var forceImport = TicketItemComment;
 
