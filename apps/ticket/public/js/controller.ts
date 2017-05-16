@@ -1,4 +1,4 @@
-import {Supertype, supertypeClass, property, remote} from 'amorphic';
+import {Supertype, supertypeClass, property, remote, amorphicStatic} from 'amorphic';
 import {BaseController} from './baseController';
 import { TicketItemComment } from '../../../common/js/ticketItemComment';
 import {Ticket} from '../../../common/js/ticket';
@@ -17,6 +17,9 @@ export class Controller extends BaseController {
 
      // Global properties
 
+    serverInit () {
+        amorphicStatic.logger.info({userConfig: amorphicStatic.config.userConfig}, 'logging from static');
+    }
     @property()
     page: string = '';
 
