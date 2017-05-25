@@ -10,8 +10,8 @@
     "compile:ts": "./node_modules/typescript/bin/tsc"
   },
   "dependencies": {
-    "amorphic": "https://github.com/selsamman/amorphic.git#ac7a5c7571a5a2394ea4264030ec9933f7ce1c11",
-    "amorphic-userman": "https://github.com/selsamman/amorphic-userman.git#f910f59d1642a8c46806aa76a38da9ce91cdc50f",
+    "amorphic": "https://github.com/selsamman/amorphic.git#0d0c81f5947358195d0d2f7247e3f6e913d978c0",
+    "amorphic-userman": "https://github.com/selsamman/amorphic-userman.git#df5bfb75ff0cc49ffdc11b085d6ccda028aa36df",
     "underscore": "1.x",
     "q": "*",
     "reflect-metadata": "^0.1.9",

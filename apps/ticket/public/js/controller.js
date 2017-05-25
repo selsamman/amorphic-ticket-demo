@@ -57,6 +57,9 @@ var Controller = (function (_super) {
         }
          */
     }
+    Controller.prototype.serverInit = function () {
+        amorphic_1.amorphicStatic.logger.info({ userConfig: amorphic_1.amorphicStatic.config.userConfig }, 'logging from static');
+    };
     Controller.prototype.ticketsFetch = function () {
         this.amorphic.logger.info({}, 'fetching tickets');
         this['ticketsPersistor'] = { isFetching: false, isFetched: true };

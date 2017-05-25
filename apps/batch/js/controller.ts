@@ -1,4 +1,4 @@
-import {Supertype, supertypeClass, Persistable, property, remote, amorphicStatic} from 'amorphic';
+import {Supertype, supertypeClass, Persistable, property, remote, amorphicStatic, Bindable} from 'amorphic';
 import { TicketItemComment } from '../../common/js/ticketItemComment';
 import {Ticket} from '../../common/js/ticket';
 import {List} from '../../common/js/static';
