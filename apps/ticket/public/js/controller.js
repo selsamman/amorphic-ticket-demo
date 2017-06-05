@@ -26,6 +26,7 @@ var ticket_1 = require("../../../common/js/ticket");
 var _ = require("underscore");
 var person_1 = require("../../../common/js/person");
 var project_1 = require("../../../common/js/project");
+var secure_1 = require("../../../common/js/secure");
 var forceImport = ticketItemComment_1.TicketItemComment;
 var Controller = (function (_super) {
     __extends(Controller, _super);
@@ -59,12 +60,14 @@ var Controller = (function (_super) {
     }
     Controller.prototype.serverInit = function () {
         amorphic_1.amorphicStatic.logger.info({ userConfig: amorphic_1.amorphicStatic.config.userConfig }, 'logging from static');
+        this.secure = new secure_1.Secure();
     };
     Controller.prototype.ticketsFetch = function () {
         this.amorphic.logger.info({}, 'fetching tickets');
         this['ticketsPersistor'] = { isFetching: false, isFetched: true };
         return ticket_1.Ticket.getFromPersistWithQuery({}).then(function (tickets) {
             this.tickets = tickets;
+            console.log(tickets[0].toJSONString());
         }.bind(this));
     };
     ;
@@ -273,6 +276,10 @@ var Controller = (function (_super) {
     ;
     return Controller;
 }(baseController_1.BaseController));
+__decorate([
+    amorphic_1.property({ getType: function () { return secure_1.Secure; } }),
+    __metadata("design:type", secure_1.Secure)
+], Controller.prototype, "secure", void 0);
 __decorate([
     amorphic_1.property(),
     __metadata("design:type", String)

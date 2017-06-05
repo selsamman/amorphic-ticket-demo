@@ -8,6 +8,10 @@ module.exports = {
     },
     module: {
         rules: [
+	        {
+		        test: /secure.ts/,
+		        loader: 'null-loader',
+	        },
             {
                 test: /\.tsx?$/,
                 loader: 'ts-loader',

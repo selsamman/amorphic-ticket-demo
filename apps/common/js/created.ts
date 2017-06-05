@@ -1,12 +1,13 @@
-import {Supertype, supertypeClass, property, remote} from 'amorphic';
-import {Person} from './person';
+import {Supertype, supertypeClass, property, remote, Remoteable, Persistable} from 'amorphic';
 
+import {Person} from './person';
+class BaseClass extends Remoteable(Persistable(Supertype)) {};
 export type Constructable<BC> = new (...args: any[]) => BC;
 
-export function Created<BC extends Constructable<{}>>(Base: BC) {
+export function Created<BC extends Constructable<BaseClass>>(Base: BC) {
 
     @supertypeClass
-     class Mixin extends Base {
+     abstract class Mixin extends Base {
 
         @property()
         created:            Date;

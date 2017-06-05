@@ -10,29 +10,30 @@
     "compile:ts": "./node_modules/typescript/bin/tsc"
   },
   "dependencies": {
-    "amorphic": "https://github.com/selsamman/amorphic.git#0d0c81f5947358195d0d2f7247e3f6e913d978c0",
-    "amorphic-userman": "https://github.com/selsamman/amorphic-userman.git#df5bfb75ff0cc49ffdc11b085d6ccda028aa36df",
+    "amorphic": "https://github.com/selsamman/amorphic.git#1771a9b3d91d06efd9aa0f946502ff1e83842c30",
+    "amorphic-userman": "https://github.com/selsamman/amorphic-userman.git#f30b444d0ff0bb32e54edc8a8ff9963e4293e7d3",
     "underscore": "1.x",
     "q": "*",
     "reflect-metadata": "^0.1.9",
     "@types/q": "*",
     "@types/underscore": "*",
     "@types/node": "^7.0.5",
-    "es6-promise": "*"
-  },
-  "devDependencies": {
-    "@types/chai": "^3.4.34",
-    "@types/mocha": "^2.2.39",
-    "chai": "1.x",
-    "gulp": "^3.9.1",
-    "mocha": "1.x",
+    "es6-promise": "*",
     "source-map-loader": "^0.1.6",
     "ts-loader": "^2.0.0",
     "ts-node": "*",
     "typescript": "^2.2.*",
     "webpack": "^2.2.1",
     "webpack-node-externals": "^1.5.4",
-    "webpack-stream": "^3.2.0"
+    "webpack-stream": "^3.2.0",
+    "null-loader": "*"
+  },
+  "devDependencies": {
+    "@types/chai": "^3.4.34",
+    "@types/mocha": "^2.2.39",
+    "chai": "1.x",
+    "gulp": "^3.9.1",
+    "mocha": "1.x"
   },
   "bundledDependencies": []
 }

@@ -6,6 +6,7 @@ import * as Q from 'Q';
 import * as _ from 'underscore';
 import {Person} from "../../../common/js/person";
 import {Project} from "../../../common/js/project";
+import {Secure} from "../../../common/js/secure";
 
 var forceImport = TicketItemComment;
 
@@ -19,7 +20,12 @@ export class Controller extends BaseController {
 
     serverInit () {
         amorphicStatic.logger.info({userConfig: amorphicStatic.config.userConfig}, 'logging from static');
+        this.secure = new Secure();
     }
+
+    @property({getType: () => Secure})
+    secure: Secure;
+
     @property()
     page: string = '';
 
@@ -45,10 +51,11 @@ export class Controller extends BaseController {
 
     @remote()
     ticketsFetch () {
-        this.amorphic.logger.info({}, 'fetching tickets');
+         this.amorphic.logger.info({}, 'fetching tickets');
         this['ticketsPersistor'] = {isFetching: false, isFetched: true};
-        return Ticket.getFromPersistWithQuery({}).then(function (tickets) {
+        return Ticket.getFromPersistWithQuery({}).then(function (tickets : Array<Ticket>) {
             this.tickets = tickets;
+            console.log(tickets[0].toJSONString());
         }.bind(this));
     };
 
