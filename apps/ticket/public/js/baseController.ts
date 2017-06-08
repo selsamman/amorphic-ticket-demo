@@ -5,9 +5,6 @@ declare var ActiveXObject : any;
 @supertypeClass
 export class BaseController extends AuthenticatingController {
 
-	getPrincipal () : AuthenticatedPrincipal {
-		return this.loggedInPerson;
-	}
 	setPrincipal(principal) {
 		this.loggedInPerson = principal
 	}

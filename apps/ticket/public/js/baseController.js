@@ -25,9 +25,6 @@ var BaseController = (function (_super) {
         _this.errorCount = 0;
         return _this;
     }
-    BaseController.prototype.getPrincipal = function () {
-        return this.loggedInPerson;
-    };
     BaseController.prototype.setPrincipal = function (principal) {
         this.loggedInPerson = principal;
     };

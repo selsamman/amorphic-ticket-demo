@@ -1,4 +1,5 @@
 import {Supertype, supertypeClass, property, remote, amorphicStatic} from 'amorphic';
+import {AuthenticatingController, AuthenticatedPrincipal} from "amorphic-userman";
 import {BaseController} from './baseController';
 import { TicketItemComment } from '../../../common/js/ticketItemComment';
 import {Ticket} from '../../../common/js/ticket';
@@ -21,6 +22,13 @@ export class Controller extends BaseController {
     serverInit () {
         amorphicStatic.logger.info({userConfig: amorphicStatic.config.userConfig}, 'logging from static');
         this.secure = new Secure();
+    }
+
+    preServerCall (changeCount) {
+        console.log("preServerCall objects changed: " + changeCount );
+    }
+    getPrincipal () : AuthenticatedPrincipal {
+        return this.loggedInPerson || new Person("","","","");
     }
 
     @property({getType: () => Secure})

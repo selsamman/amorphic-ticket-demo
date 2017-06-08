@@ -62,6 +62,12 @@ var Controller = (function (_super) {
         amorphic_1.amorphicStatic.logger.info({ userConfig: amorphic_1.amorphicStatic.config.userConfig }, 'logging from static');
         this.secure = new secure_1.Secure();
     };
+    Controller.prototype.preServerCall = function (changeCount) {
+        console.log("preServerCall objects changed: " + changeCount);
+    };
+    Controller.prototype.getPrincipal = function () {
+        return this.loggedInPerson || new person_1.Person("", "", "", "");
+    };
     Controller.prototype.ticketsFetch = function () {
         this.amorphic.logger.info({}, 'fetching tickets');
         this['ticketsPersistor'] = { isFetching: false, isFetched: true };

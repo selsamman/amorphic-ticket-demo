@@ -7,5 +7,5 @@
     "objectCacheSeconds" : 600,
     "sessionSecret" : "Ey0veeljPcLsHitdxCG2",
 	"applications" : {"ticket": "apps/ticket", "batch": "apps/batch"},
-	"application"  : "ticket;batch"
+	"application"  : "ticket"
 }
