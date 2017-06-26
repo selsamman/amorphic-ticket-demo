@@ -17,7 +17,7 @@ export class Ticket  extends Created(Remoteable(Persistable(Supertype))){
     @property({toServer: false, fetch: true})
     project:            Project = null;
 
-    @property({type: TicketItem, fetch: true})
+    @property({type: Array, fetch: true, getType: () => TicketItem})
     ticketItems: 	Array<TicketItem> = [];
 
     constructor (title? : string, description? : string, projectName? : string, projectDescription? : string) {
