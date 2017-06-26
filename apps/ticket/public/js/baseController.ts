@@ -3,7 +3,7 @@ import {AuthenticatingController, AuthenticatedPrincipal} from "amorphic-userman
 import {Person} from "../../../common/js/person";
 declare var ActiveXObject : any;
 @supertypeClass
-export class BaseController extends AuthenticatingController {
+export abstract class BaseController extends AuthenticatingController {
 
 	setPrincipal(principal) {
 		this.loggedInPerson = principal
