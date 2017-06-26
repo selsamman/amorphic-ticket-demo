@@ -31,6 +31,10 @@ export class Controller extends BaseController {
         return this.loggedInPerson || new Person("","","","");
     }
 
+    newPrincipal () : AuthenticatedPrincipal {
+        return new Person("","","","");
+    }
+    
     @property({getType: () => Secure})
     secure: Secure;
 
