@@ -22,7 +22,7 @@
     "source-map-loader": "^0.1.6",
     "ts-loader": "^2.0.0",
     "ts-node": "*",
-    "typescript": "^2.2.*",
+    "typescript": "2.3.2",
     "webpack": "^2.2.1",
     "webpack-node-externals": "^1.5.4",
     "webpack-stream": "^3.2.0",

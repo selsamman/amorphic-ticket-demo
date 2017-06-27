@@ -67,7 +67,9 @@ export class Controller extends BaseController {
         this['ticketsPersistor'] = {isFetching: false, isFetched: true};
         return Ticket.getFromPersistWithQuery({}).then(function (tickets : Array<Ticket>) {
             this.tickets = tickets;
-            console.log(tickets[0].toJSONString());
+            if (tickets[0]) {
+                console.log(tickets[0].toJSONString());
+            }
         }.bind(this));
     };
 
