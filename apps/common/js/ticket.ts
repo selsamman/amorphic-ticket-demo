@@ -5,7 +5,7 @@ import {TicketItemComment} from './ticketItemComment';
 import {TicketItem} from './ticketItem';
 import {Created, Constructable} from './created'
 console.log("Compiling Ticket");
-@supertypeClass
+@supertypeClass({toClient: 'online'})
 export class Ticket  extends Created(Remoteable(Persistable(Supertype))){
 
     @property({rule: ['required']})

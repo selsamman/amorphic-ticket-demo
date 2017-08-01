@@ -1,4 +1,7 @@
 import {Supertype, supertypeClass, property, remote, amorphicStatic} from 'amorphic';
+
+amorphicStatic['toClientRuleSet'] = ['online'];
+
 import {AuthenticatingController, AuthenticatedPrincipal} from "amorphic-userman";
 import {BaseController} from './baseController';
 import { TicketItemComment } from '../../../common/js/ticketItemComment';
@@ -27,7 +30,7 @@ export class Controller extends BaseController {
     preServerCall (changeCount) {
         console.log("preServerCall objects changed: " + changeCount );
     }
-    getPrincipal () : AuthenticatedPrincipal {
+        getPrincipal () : AuthenticatedPrincipal {
         return this.loggedInPerson || new Person("","","","");
     }
 
@@ -80,7 +83,7 @@ export class Controller extends BaseController {
     loggedInPerson: Person = null;
 
     @property({type: Person, autoFetch: true})
-    people: Array<Person>;
+    people: Array<Person> = [];
 
     @remote()
     peopleFetch () {
