@@ -1,5 +1,7 @@
 import {Supertype, supertypeClass, property, remote, amorphicStatic} from 'amorphic';
-import {AuthenticatingController, AuthenticatedPrincipal} from "amorphic-userman";
+//import {AuthenticatingController, AuthenticatedPrincipal} from "amorphic-userman";
+import {AuthenticatedPrincipal} from '../../../common/js/AuthenticatedPrincipal';
+import {AuthenticatingController} from "../../../common/js/AuthenticatingController";
 import {BaseController} from './baseController';
 import { TicketItemComment } from '../../../common/js/ticketItemComment';
 import {Ticket} from '../../../common/js/ticket';
@@ -20,8 +22,16 @@ export class Controller extends BaseController {
      // Global properties
 
     serverInit () {
-        amorphicStatic.logger.info({userConfig: amorphicStatic.config.userConfig}, 'logging from static');
-        this.secure = new Secure();
+        return sync().then(function() {
+            amorphicStatic.logger.info({userConfig: amorphicStatic.config.userConfig}, 'logging from static');
+            this.secure = new Secure();
+            return;
+        }.bind(this));
+
+
+        function sync() {
+            return amorphicStatic.syncAllTables();
+        }
     }
 
     preServerCall (changeCount) {
@@ -58,6 +68,12 @@ export class Controller extends BaseController {
     @property()
     ticket: Ticket = null;  // unlike with supertype properties are not 'ownProperty'
 
+    @property()
+    zTicket: Ticket = null;
+
+    // @property()
+    // aTicket: Ticket = null;
+
     @property({autoFetch: true, type: Ticket})
     tickets: Array<Ticket>;
 
@@ -67,6 +83,7 @@ export class Controller extends BaseController {
         this['ticketsPersistor'] = {isFetching: false, isFetched: true};
         return Ticket.getFromPersistWithQuery({}).then(function (tickets : Array<Ticket>) {
             this.tickets = tickets;
+          //  this.aTicket = tickets[0];
             if (tickets[0]) {
                 console.log(tickets[0].toJSONString());
             }
@@ -124,26 +141,47 @@ export class Controller extends BaseController {
         this.route.private.ticket();
     };
 
+
+
     @remote()
     addComment () {
-        return this.ticket.addComment(this.comment, this.loggedInPerson).persistSave()
-            .then(function () {
-                this.comment = '';
-            }.bind(this));
+        return Ticket.getFromPersistWithQuery({_id: this.ticket._id}).then(function(ticket){
+            this.zTicket = ticket[0];
+            return this.zTicket.addComment(this.comment, this.loggedInPerson).persistSave()
+                .then(function () {
+                    this.comment = '';
+                }.bind(this));
+        }.bind(this));
+
+    }
+
+    @remote()
+    newTicketOnServer() {
+        throw new Error('Update Conflict');
+
     }
 
     // Ask the ticket to save itself and update our list of tickets
     @remote({validate: function () {return this.validate()}})
-    saveTicket ()
-    {
-        if (this.ticket)
+    saveTicket () {
+        // if (this.ticket)
+        //
+        //     return this.ticket.save().then(function (error) {
+        //         this.status = "Ticket Saved at " + this.getDisplayTime();
+        //         this.error = null;
+        //
+        //     }.bind(this));
 
-            return this.ticket.save().then(function(error)
-            {
-                    this.status = "Ticket Saved at " + this.getDisplayTime();
-                    this.error = null;
-
-            }.bind(this));
+        if(this.ticket) {
+            let title = this.ticket.title;
+            return Ticket.getFromPersistWithQuery({_id: this.ticket._id})
+                .then((tickets) => {
+                    this.zTicket = tickets[0]
+                    console.log('title value:' , this.zTicket.title );
+                    this.zTicket.title = title;
+                    return this.zTicket.persistSave();
+                })
+        }
     };
 
     // Ask the ticket to remove itself and update our list of tickets
@@ -227,6 +265,8 @@ export class Controller extends BaseController {
 
     @remote()
     saveProject ()  {
+
+
         if (this.project)
 
             return this.project.save(this.person).then(function()
@@ -283,8 +323,11 @@ export class Controller extends BaseController {
         this.projects = null;
         this.ticket = null;
         this.tickets = null;
-        //this.publicLogout('home');
+        this.publicLogout('home');
+        // let amorphic : any = window.amorphic;
+        // amorphic.expireController();
     };
+
 
     /**
      * Called if an error thrown on server call that is not handled

@@ -1,1 +1,6 @@
 .idea
+node_modules
+apps/**/js/*.js
+apps/**/js/*.js.map
+apps/**/test/**/*.js
+apps/**/test/**/*.js.map

@@ -10,23 +10,24 @@
     "compile:ts": "./node_modules/typescript/bin/tsc"
   },
   "dependencies": {
-    "amorphic": "https://github.com/selsamman/amorphic.git#576c57455e3e54f5db9770fc72e156d4d9c0a2ff",
-    "amorphic-userman": "https://github.com/selsamman/amorphic-userman.git#922d5c1d25d38a3a2127ae4dc32fd562e39dd35a",
-    "underscore": "1.x",
-    "q": "*",
-    "reflect-metadata": "^0.1.9",
+    "@types/node": "^7.0.5",
     "@types/q": "*",
     "@types/underscore": "*",
-    "@types/node": "^7.0.5",
+    "amorphic": "^2.3.3",
+    "amorphic-userman": "1.4.2",
     "es6-promise": "*",
+    "null-loader": "*",
+    "pbkdf2": "3.0.13",
+    "q": "^2.0.3",
+    "reflect-metadata": "^0.1.9",
     "source-map-loader": "^0.1.6",
     "ts-loader": "^2.0.0",
     "ts-node": "*",
     "typescript": "2.3.2",
+    "underscore": "1.x",
     "webpack": "^2.2.1",
     "webpack-node-externals": "^1.5.4",
-    "webpack-stream": "^3.2.0",
-    "null-loader": "*"
+    "webpack-stream": "^3.2.0"
   },
   "devDependencies": {
     "@types/chai": "^3.4.34",

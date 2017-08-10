@@ -1,7 +1,7 @@
 import {Supertype, supertypeClass, property, Remoteable, Persistable} from 'amorphic';
 import {TicketItem} from './ticketItem';
 console.log("Compiling Person");
-import {AuthenticatedPrincipal} from "amorphic-userman";
+import {AuthenticatedPrincipal} from './AuthenticatedPrincipal';
 
 @supertypeClass
 export class Person extends AuthenticatedPrincipal {
@@ -20,7 +20,7 @@ export class Person extends AuthenticatedPrincipal {
     email:              string = "";
 
     // Relationships
-    @property({type: TicketItem})
+    @property({getType: () => TicketItem})
     ticketItems:        Array<TicketItem> = [];
 
     constructor  (email: string, first: string, middle: string, last: string) {

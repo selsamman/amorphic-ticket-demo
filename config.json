@@ -2,7 +2,7 @@
     "templateMode": "typescript",
     "conflictMode": "soft",
     "sourceMode": "webpack",
-    "port": 3001,
+    "port": 9002,
     "sessionSeconds" : 3600,
     "objectCacheSeconds" : 600,
     "sessionSecret" : "Ey0veeljPcLsHitdxCG2",

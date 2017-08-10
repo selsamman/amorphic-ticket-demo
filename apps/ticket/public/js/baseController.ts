@@ -1,5 +1,6 @@
 import {Supertype, supertypeClass, property, remote} from 'amorphic';
-import {AuthenticatingController, AuthenticatedPrincipal} from "amorphic-userman";
+//import {AuthenticatingController, AuthenticatedPrincipal} from "amorphic-userman";
+import {AuthenticatingController} from '../../../common/js/AuthenticatingController';
 import {Person} from "../../../common/js/person";
 declare var ActiveXObject : any;
 @supertypeClass

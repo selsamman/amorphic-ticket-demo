@@ -1,6 +1,4 @@
 {
-	"dbPath":       "mongodb://localhost:27017/",
-	"dbName":       "ticket",
     "createControllerFor": "yes",
 	"ver":          "0",
 	"userman":  {
@@ -8,5 +6,18 @@
 		"controller": {"require": "controller", "template": "Controller", "fields":{"principal": "loggedInPerson"}},
 		"principal": {"require" : "person", "template": "Person"},
 		"validateEmail": true
+	},
+	"authentication": {
+		"validateEmail": false,
+		"defaultEmail": "admin@havenlife.com",
+		"defaultAdminRole": "sadmin",
+		"maxLoginAttempts": 3,
+		"maxLoginAttemptsPeriodHours": 6,
+		"temporaryPasswordExpiresHours": 24,
+		"temporaryPasswordExpiresMinutes": 1440,
+		"passwordExpiresMinutes": 129600,
+		"passwordExpiresDays": 90,
+		"maxPreviousPasswords": 3,
+		"maxLoginPeriodMinutes": 10
 	}
 }

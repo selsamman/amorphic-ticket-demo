@@ -3,10 +3,17 @@ import {Person} from './person';
 import {Project} from './project';
 import {TicketItemComment} from './ticketItemComment';
 import {TicketItem} from './ticketItem';
-import {Created, Constructable} from './created'
+//import {Created, Constructable} from './created'
 console.log("Compiling Ticket");
 @supertypeClass
-export class Ticket  extends Created(Remoteable(Persistable(Supertype))){
+export class Ticket  extends Remoteable(Persistable(Supertype)){
+
+    @property()
+    created:            Date;
+
+    @property({fetch: true, getType: () => {return Person}})
+    creator:            Person;
+
 
     @property({rule: ['required']})
     title:			string;

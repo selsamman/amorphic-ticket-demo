@@ -2,11 +2,11 @@ import {Supertype, supertypeClass, property, remote, Remoteable, Persistable} fr
 import {Person} from './person';
 import {Ticket} from './ticket';
 import {TicketItemComment} from './ticketItemComment';
-import {Created, Constructable} from './created';
+//import {Created, Constructable} from './created';
 console.log("Compiling TicketItem");
 
 @supertypeClass
-export class TicketItem extends Created(Remoteable(Persistable(Supertype))) {
+export class TicketItem extends Remoteable(Persistable(Supertype)) {
 
     // Secure properties can only be set on the server
     @property({getType: ()=>{return Person}})
