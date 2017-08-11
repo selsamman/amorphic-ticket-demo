@@ -27,7 +27,7 @@
     </div>
 
     <div class="form-group">
-        <b:objectselectfield b:bind="ticket.project" id="project" lcols="2" fcols="4" label="Project" values="projects" text="name" empty="none" b:onchange="if(!ticket.project){ticket.release=null}"></b:objectselectfield>
+        <b:objectselectfield b:bind="ticket.project" id="project" lcols="2" fcols="4" label="Project" values="projectsGet()" text="name" empty="none" b:onchange="if(!ticket.project){ticket.release=null}"></b:objectselectfield>
     </div>
 
 </form>
@@ -35,7 +35,7 @@
 <b:if test="ticket.created">
     <div class="page-header">
         <div class="pull-right">
-            <button b:onclick="ticket.addComment(comment);comment=''" type="button" class="btn btn-primary btn-lg">Add Comment</button>
+            <button b:onclick="addComment()" type="button" class="btn btn-primary btn-lg">Add Comment</button>
         </div>
         <h1>Ticket Activity</h1></div>
     </div>
