@@ -2,6 +2,13 @@
 ## Purpose
 This project demonstrates how to use Amorphic by providing a complete example.  It uses MongoDB though it can easily be converted to MongoDB.
 
+## Docker
+
+* Install docker CE  https://www.docker.com/community-edition
+* Checkout this project from github
+* Run docker-compose up
+* Go to http://localhost:3000
+
 ## Installation
 
 * Install MongoDB if you have not already done so

@@ -1,18 +1,16 @@
 {
   "name": "semotus",
   "subdomain": "semotus",
-  "version": "0.0.92",
+  "version": "0.0.93",
   "engines": {
-    "node": "0.10.x"
+    "node": "6.11.x"
   },
   "scripts": {
     "start": "app.js",
-    "compile:ts": "./node_modules/typescript/bin/tsc"
+    "compile:ts": "./node_modules/typescript/bin/tsc",
+    "build:app": "./node_modules/.bin/gulp webpack"
   },
   "dependencies": {
-    "@types/node": "^7.0.5",
-    "@types/q": "*",
-    "@types/underscore": "*",
     "amorphic": "^2.3.3",
     "amorphic-userman": "1.4.2",
     "es6-promise": "*",
@@ -21,20 +19,25 @@
     "q": "^2.0.3",
     "reflect-metadata": "^0.1.9",
     "source-map-loader": "^0.1.6",
-    "ts-loader": "^2.0.0",
-    "ts-node": "*",
-    "typescript": "2.3.2",
-    "underscore": "1.x",
-    "webpack": "^2.2.1",
-    "webpack-node-externals": "^1.5.4",
-    "webpack-stream": "^3.2.0"
+    "underscore": "1.x"
   },
   "devDependencies": {
     "@types/chai": "^3.4.34",
     "@types/mocha": "^2.2.39",
+    "@types/node": "^7.0.5",
+    "@types/lodash": "4.14.69",
+    "@types/nconf": "0.0.34",
+    "@types/q": "*",
+    "@types/underscore": "*",
     "chai": "1.x",
     "gulp": "^3.9.1",
-    "mocha": "1.x"
+    "mocha": "1.x",
+    "typescript": "2.3.4",
+    "ts-loader": "^2.0.0",
+    "ts-node": "*",
+    "webpack": "^2.2.1",
+    "webpack-node-externals": "^1.5.4",
+    "webpack-stream": "^3.2.0"
   },
   "bundledDependencies": []
 }
