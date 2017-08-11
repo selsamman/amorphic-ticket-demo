@@ -7,7 +7,7 @@ services:
     environment:
       - POSTGRES_USER=amorphic
       - POSTGRES_PASSWORD=amorphic
-      - POSTGRES_DB=dmyticketdb
+      - POSTGRES_DB=myticketdb
     volumes:
       - ./.postgres:/var/lib/postgresql/data
   demo-app:
@@ -17,14 +17,13 @@ services:
     image: amorphic-ticket-demo:latest
     depends_on:
       - database
-#     - redis
     ports:
       - '3000:3000'
     env_file:
       - ./demo.env
     environment:
       - application=ticket
-    command: node app.js
+    command: ./wait-for-it.sh database:5432 -- node app.js
   batch-daemon:
     build:
       context: .
@@ -36,5 +35,5 @@ services:
       - ./demo.env
     environment:
       - application=batch
-    command: node app.js
+    command: ./wait-for-it.sh database:5432 -- node app.js
     

@@ -1,17 +1,20 @@
-FROM node:6.11-alpine
+FROM node:8.3-alpine
 
 EXPOSE 3000
-
-RUN addgroup amorphic \
+RUN apk update && apk add --no-cache \
+    curl \
+    bash \
+    && addgroup amorphic \
     && adduser -s /bin/bash -D -G amorphic amorphic
 
 WORKDIR /app
 
+COPY ./wait-for-it.sh .
+
 # Default to production npm install unless otherwise specified
 ARG NODE_ENV=production
-ENV NODE_PATH=/app/node_modules/
 
-COPY ./package.json ./
+COPY ./package.json .
 RUN yarn install --production=true
 
 COPY ./ ./
