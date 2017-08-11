@@ -2,7 +2,6 @@ FROM node:8.3-alpine
 
 EXPOSE 3000
 RUN apk update && apk add --no-cache \
-    curl \
     bash \
     && addgroup amorphic \
     && adduser -s /bin/bash -D -G amorphic amorphic
