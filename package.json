@@ -12,11 +12,23 @@
         "q": "0.9.x",
         "amorphic": "2.0.*",
         "amorphic-userman": "x",
-        "amorphic-mandrill": "x"
+        "amorphic-mandrill": "x",
+        "crypto": "*",
+        "url": "*"
     },
     "devDependencies": {
-        "chai": "1.x",
-        "mocha": "1.x"
+        "typescript" : "2.3.4",
+        "@types/chai": "3.5.2",
+        "@types/knex": "0.0.56",
+        "@types/lodash": "4.14.69",
+        "@types/mocha": "2.2.41",
+        "@types/nconf": "0.0.34",
+        "@types/node": "7.0.23",
+        "@types/pg": "6.1.42",
+        "@types/q": "1.0.2",
+        "@types/underscore": "1.8.0",
+        "chai": "*",
+        "mocha": "*"
     },
     "bundledDependencies": [
     ]
