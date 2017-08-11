@@ -1,35 +1,43 @@
 {
-    "name": "semotus",
-    "subdomain": "semotus",
-    "version": "0.0.92",
-    "engines": {
-        "node": "0.10.x"
-    },
-    "scripts": {
-        "start": "app.js"
-    },
-    "dependencies": {
-        "q": "0.9.x",
-        "amorphic": "2.0.*",
-        "amorphic-userman": "x",
-        "amorphic-mandrill": "x",
-        "crypto": "*",
-        "url": "*"
-    },
-    "devDependencies": {
-        "typescript" : "2.3.4",
-        "@types/chai": "3.5.2",
-        "@types/knex": "0.0.56",
-        "@types/lodash": "4.14.69",
-        "@types/mocha": "2.2.41",
-        "@types/nconf": "0.0.34",
-        "@types/node": "7.0.23",
-        "@types/pg": "6.1.42",
-        "@types/q": "1.0.2",
-        "@types/underscore": "1.8.0",
-        "chai": "*",
-        "mocha": "*"
-    },
-    "bundledDependencies": [
-    ]
+  "name": "semotus",
+  "subdomain": "semotus",
+  "version": "0.0.93",
+  "engines": {
+    "node": "6.11.x"
+  },
+  "scripts": {
+    "start": "app.js",
+    "compile:ts": "./node_modules/typescript/bin/tsc"
+  },
+  "dependencies": {
+    "amorphic": "^2.3.3",
+    "amorphic-userman": "1.4.2",
+    "es6-promise": "*",
+    "null-loader": "*",
+    "pbkdf2": "3.0.13",
+    "q": "^2.0.3",
+    "reflect-metadata": "^0.1.9",
+    "source-map-loader": "^0.1.6",
+    "underscore": "1.x",
+  },
+  "devDependencies": {
+    "@types/chai": "^3.4.34",
+    "@types/mocha": "^2.2.39",
+    "@types/node": "^7.0.5",
+    "@types/lodash": "4.14.69",
+    "@types/nconf": "0.0.34",
+
+    "@types/q": "*",
+    "@types/underscore": "*",
+    "chai": "1.x",
+    "gulp": "^3.9.1",
+    "mocha": "1.x",
+    "typescript": "2.3.4",
+    "ts-loader": "^2.0.0",
+    "ts-node": "*",
+    "webpack": "^2.2.1",
+    "webpack-node-externals": "^1.5.4",
+    "webpack-stream": "^3.2.0"
+  },
+  "bundledDependencies": []
 }

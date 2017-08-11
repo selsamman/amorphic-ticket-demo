@@ -1,0 +1,8 @@
+{
+  "isDaemon": "true",
+  "ver": "0",
+  "userConfig": "peachy",
+  "dbPath":       "mongodb://localhost:27017/",
+  "dbName":       "ticket"
+
+}
