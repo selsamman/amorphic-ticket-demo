@@ -1,12 +1,5 @@
 version: '2'
 services:
-  redis:
-    image: redis:4.0-alpine
-    ports:
-      - '6379:6379'
-    volumes:
-      - ./.redis:/data
-    #command: redis-server /tmp/redis.conf --appendonly yes
   database:
     image: postgres:9.4-alpine
     ports:
@@ -17,23 +10,31 @@ services:
       - POSTGRES_DB=dmyticketdb
     volumes:
       - ./.postgres:/var/lib/postgresql/data
-  nginx:
-    image: nginx:1.12
-    ports:
-      - '3001:80'
-    environment:
-      - UPSTREAM=ticket-demo:3000
-  amorphic-ticket-demo:
+  demo-app:
     build:
       context: .
       dockerfile: Dockerfile
     image: amorphic-ticket-demo:latest
     depends_on:
       - database
-      - redis
+#     - redis
     ports:
-      - '3000'
+      - '3000:3000'
     env_file:
       - ./demo.env
+    environment:
+      - application=ticket
+    command: node app.js
+  batch-daemon:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: amorphic-daemon-ticket-demo:latest
+    depends_on:
+      - database
+    env_file:
+      - ./demo.env
+    environment:
+      - application=batch
     command: node app.js
     

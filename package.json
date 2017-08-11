@@ -7,7 +7,8 @@
   },
   "scripts": {
     "start": "app.js",
-    "compile:ts": "./node_modules/typescript/bin/tsc"
+    "compile:ts": "./node_modules/typescript/bin/tsc",
+    "build:app": "./node_modules/.bin/gulp webpack"
   },
   "dependencies": {
     "amorphic": "^2.3.3",
@@ -18,7 +19,7 @@
     "q": "^2.0.3",
     "reflect-metadata": "^0.1.9",
     "source-map-loader": "^0.1.6",
-    "underscore": "1.x",
+    "underscore": "1.x"
   },
   "devDependencies": {
     "@types/chai": "^3.4.34",
@@ -26,7 +27,6 @@
     "@types/node": "^7.0.5",
     "@types/lodash": "4.14.69",
     "@types/nconf": "0.0.34",
-
     "@types/q": "*",
     "@types/underscore": "*",
     "chai": "1.x",

@@ -5,7 +5,7 @@ import {AuthenticatingController} from "../../../common/js/AuthenticatingControl
 import {BaseController} from './baseController';
 import { TicketItemComment } from '../../../common/js/ticketItemComment';
 import {Ticket} from '../../../common/js/ticket';
-import * as Q from 'Q';
+import * as Q from 'q';
 import * as _ from 'underscore';
 import {Person} from "../../../common/js/person";
 import {Project} from "../../../common/js/project";
