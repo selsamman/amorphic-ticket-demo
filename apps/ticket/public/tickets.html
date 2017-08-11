@@ -1,7 +1,9 @@
 <div class="page-header">
     <div class="pull-right">
+        <span b:bind="loggedInPerson.email"></span>
         <a href="#" b:onclick="ticketsFetch()">refresh</a>&nbsp;&nbsp;&nbsp;
         <button b:onclick="newTicket()" type="button" class="btn btn-primary btn-lg">New Ticket</button>
+        <button b:onclick="newTicketOnServer()" type="button" class="btn btn-primary btn-lg">Throw Exception</button>
     </div>
     <h1>Tickets</h1>
 </div>

@@ -1,9 +1,11 @@
 {
-    "templateMode": "auto",
-    "port": 3001,
+    "templateMode": "typescript",
+    "conflictMode": "soft",
+    "sourceMode": "webpack",
+    "port": 9002,
     "sessionSeconds" : 3600,
     "objectCacheSeconds" : 600,
     "sessionSecret" : "Ey0veeljPcLsHitdxCG2",
-	"applications" : {"ticket": "apps/ticket"},
+	"applications" : {"ticket": "apps/ticket", "batch": "apps/batch"},
 	"application"  : "ticket"
 }
