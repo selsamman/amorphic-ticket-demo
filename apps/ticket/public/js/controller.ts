@@ -145,7 +145,8 @@ export class Controller extends BaseController {
 
     @remote()
     addComment () {
-        return Ticket.getFromPersistWithQuery({_id: this.ticket._id}).then(function(ticket){
+        let sessionStore : any = this.amorphic;
+        return Ticket.persistorFetchByQuery({_id: this.ticket._id}, {sessionStore: sessionStore}).then(function(ticket){
             this.zTicket = ticket[0];
             return this.zTicket.addComment(this.comment, this.loggedInPerson).persistSave()
                 .then(function () {
